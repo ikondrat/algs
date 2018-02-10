@@ -22,7 +22,7 @@ public class Percolation {
      * constructor of class.
      * @param n size of collection
      */
-    public Percolation(final int n ) {
+    public Percolation(final int n) {
         if (n <= 0) throw new IllegalArgumentException("illegal argument for constructor");
         size = n;
         cells = new boolean[size * size + 2];

@@ -5,6 +5,10 @@
 "http://checkstyle.sourceforge.net/dtds/suppressions_1_1.dtd">
 
 <suppressions>
-  <suppress checks="IllegalImport|AvoidStaticImport|ParenPad"
+  <suppress 
+    checks="IllegalImport|AvoidStaticImport|ParenPad"
     files="AppTest.java"/>
+  <suppress 
+  checks="IllegalImport|AvoidStaticImport|ParenPad"
+  files="PercolationVisualizer.java"/>
 </suppressions>
