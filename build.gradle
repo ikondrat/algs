@@ -53,3 +53,15 @@ findbugs {
     toolVersion = "3.0.1"
     includeFilter = file("$rootDir/config/findbugs/findbugs.xml")
 }
+
+task runHello(type: JavaExec) {
+  classpath sourceSets.main.runtimeClasspath
+  main = "App"
+  args "arg1", "arg2"
+}
+
+task runPercolation(type: JavaExec) {
+  classpath sourceSets.main.runtimeClasspath
+  main = "PercolationVisualizer"
+  args "etc/percolation/input20.txt"
+}
