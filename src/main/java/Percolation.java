@@ -86,7 +86,7 @@ public class Percolation {
     }
 
     /**
-     * @param row the row nunber
+     * @param row the row number
      * @param col the col number
      * @return index
      */
@@ -106,9 +106,8 @@ public class Percolation {
         if (i <= 0 || i > size) throw new IndexOutOfBoundsException("index " + i + " out of bounds");
     }
 
-
     /**
-     * @param row the row nunber
+     * @param row the row number
      * @param col the col number
      * @return open state
      */
@@ -117,7 +116,7 @@ public class Percolation {
     }
 
     /*
-     * @param row the row nunber
+     * @param row the row number
      * @param col the col number
      * @return filled state
      */

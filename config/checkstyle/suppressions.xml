@@ -6,9 +6,6 @@
 
 <suppressions>
   <suppress 
-    checks="IllegalImport|AvoidStaticImport|ParenPad"
-    files="AppTest.java"/>
-  <suppress 
-  checks="IllegalImport|AvoidStaticImport|ParenPad"
-  files="PercolationVisualizer.java"/>
+    checks="IllegalImport|AvoidStaticImport|ParenPad|AvoidStarImport"
+    files="PercolationTest.java|PercolationVisualizer.java"/>
 </suppressions>

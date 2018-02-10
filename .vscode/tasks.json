@@ -7,6 +7,11 @@
             "label": "run",
             "type": "shell",
             "command": "./gradlew run"
+        },
+        {
+            "label": "Percolation",
+            "type": "shell",
+            "command": "./gradlew runPercolation"
         }
     ]
 }

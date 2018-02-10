@@ -15,7 +15,7 @@ plugins {
 }
 
 // Define the main class for the application
-mainClassName = 'App'
+mainClassName = 'PercolationVisualizer'
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
@@ -52,12 +52,6 @@ apply plugin: 'findbugs'
 findbugs {
     toolVersion = "3.0.1"
     includeFilter = file("$rootDir/config/findbugs/findbugs.xml")
-}
-
-task runHello(type: JavaExec) {
-  classpath sourceSets.main.runtimeClasspath
-  main = "App"
-  args "arg1", "arg2"
 }
 
 task runPercolation(type: JavaExec) {
