@@ -12,6 +12,11 @@
             "label": "Percolation",
             "type": "shell",
             "command": "./gradlew runPercolation"
+        },
+        {
+            "label": "BruteCollinearPoints",
+            "type": "shell",
+            "command": "./gradlew BruteCollinearPoints"
         }
     ]
 }

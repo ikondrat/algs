@@ -14,7 +14,6 @@
     // Specify the path to the checkstyle properties file, by default it's empty.
     "checkstyle.propertiesPath": "",
     "files.exclude": {
-        "**/bin": true,         // this is a default value
-        "**/build": true
+        "**/bin": true
     }
 }

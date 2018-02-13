@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        
         {
             "type": "java",
             "name": "Debug (Launch)",
@@ -13,6 +14,16 @@
             "stopOnEntry": false,
             "mainClass": "App",
             "args": ""
+        },
+        {
+            "type": "java",
+            "name": "BruteCollinearPoints",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "BruteCollinearPoints",
+            "args": "etc/collinear/input8.txt"
         },
         {
             "type": "java",

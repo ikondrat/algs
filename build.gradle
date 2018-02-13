@@ -51,6 +51,8 @@ apply plugin: 'findbugs'
 
 findbugs {
     toolVersion = "3.0.1"
+    showProgress = true
+    reportLevel = "high"
     includeFilter = file("$rootDir/config/findbugs/findbugs.xml")
 }
 
@@ -58,4 +60,10 @@ task runPercolation(type: JavaExec) {
   classpath sourceSets.main.runtimeClasspath
   main = "PercolationVisualizer"
   args "etc/percolation/input20.txt"
+}
+
+task BruteCollinearPoints(type: JavaExec) {
+  classpath sourceSets.main.runtimeClasspath
+  main = "BruteCollinearPoints"
+  args "etc/collineat/input8.txt"
 }

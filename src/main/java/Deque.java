@@ -3,7 +3,7 @@ import edu.princeton.cs.algs4.StdOut;
 import java.util.Iterator;
 
 public class Deque<Item> implements Iterable<Item> {
-    private static int N = 10;
+    private static int n = 10;
 
     private static int start, size;
     private Item[] items;
@@ -11,8 +11,8 @@ public class Deque<Item> implements Iterable<Item> {
     // construct an empty deque
     public Deque() {
         size = 0;
-        start = N/2 - 1;
-        items = (Item[]) new Object[N];
+        start = n/2 - 1;
+        items = (Item[]) new Object[n];
     }
 
     // is the deque empty?
@@ -26,7 +26,7 @@ public class Deque<Item> implements Iterable<Item> {
     }
 
     private void resize(int capacity) {
-        N = capacity;
+        n = capacity;
         Item[] copy = (Item[]) new Object[capacity];
         int first = capacity/4 - 1;
         for (int i = first, j = 0; j < size; i++) {
@@ -40,17 +40,17 @@ public class Deque<Item> implements Iterable<Item> {
 
     // add the item to the front
     public void addFirst(Item item) {
-        if (item == null) throw new NullPointerException ("argument can't be null in addFirst");
-        if (size() >= N/2) resize(N*2);
-        int index = start >= 0 ? start-- : N - Math.abs(start--);
+        if (item == null) throw new NullPointerException("argument can't be null in addFirst");
+        if (size() >= n/2) resize(n*2);
+        int index = start >= 0 ? start-- : n - Math.abs(start--);
         items[index] = item;
         size++;
     }
 
     private int getLastIndex() {
         int index = start + size() + 1;
-        if (index >= N) {
-            index = index - N;
+        if (index >= n) {
+            index = index - n;
         }
         return index;
     }
@@ -58,7 +58,7 @@ public class Deque<Item> implements Iterable<Item> {
     // add the item to the end
     public void addLast(Item item) {
         if (item == null) throw new NullPointerException("argument can't be null in addLast");
-        if (size() >= N/2) resize(N*2);
+        if (size() >= n/2) resize(n*2);
         items[getLastIndex()] = item;
         size++;
     }
@@ -74,7 +74,7 @@ public class Deque<Item> implements Iterable<Item> {
         clear(start);
         size--;
 
-        if (size() <= N/4) resize(N/2);
+        if (size() <= n/4) resize(n/2);
         return val;
     }
 
@@ -85,7 +85,7 @@ public class Deque<Item> implements Iterable<Item> {
         Item val = items[index];
         clear(index);
         size--;
-        if (size() <= N/4) resize(N/2);
+        if (size() <= n/4) resize(n/2);
         return val;
     }
 
@@ -108,7 +108,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     // unit testing
     public static void main(String[] args) {
-        Deque <Integer> dq = new Deque<Integer>();
+        Deque<Integer> dq = new Deque<Integer>();
         dq.addFirst(1);
         dq.addFirst(2);
         dq.addLast(3);
@@ -121,7 +121,6 @@ public class Deque<Item> implements Iterable<Item> {
         dq.addLast(20);
         dq.removeFirst();
         dq.removeLast();
-        int s = dq.size();
         for (int num : dq)
             StdOut.println(num);
     }
