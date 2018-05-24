@@ -22,8 +22,20 @@
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopOnEntry": false,
+            "projectName": "princeton-algorithms",
             "mainClass": "BruteCollinearPoints",
-            "args": "etc/collinear/input8.txt"
+            "args": "etc/collinear/input80.txt"
+        },
+        {
+            "type": "java",
+            "name": "Percolation",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "projectName": "princeton-algorithms",
+            "mainClass": "PercolationVisualizer",
+            "args": "etc/percolation/input20.txt"
         },
         {
             "type": "java",
