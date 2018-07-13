@@ -47,16 +47,19 @@ checkstyle {
     toolVersion = "8.5"
 }
 
-// apply plugin: 'findbugs'
+apply plugin: 'findbugs'
 
-// findbugs {
-//     toolVersion = "3.0.1"
-//     showProgress = true
-//     reportLevel = "high"
-//     includeFilter = file("$rootDir/config/findbugs/findbugs.xml")
-// }
+findbugs {
+    toolVersion = "3.0.1"
+    showProgress = true
+    reportLevel = "high"
+    includeFilter = file("$rootDir/config/findbugs/findbugs.xml")
+}
+run {
+    args "etc/percolation/input20.txt"
+}
 
-task runPercolation(type: JavaExec) {
+task runPercolation(type: JavaExec, dependsOn: checkstyleMain) {
   classpath sourceSets.main.runtimeClasspath
   main = "PercolationVisualizer"
   args "etc/percolation/input20.txt"
@@ -68,4 +71,5 @@ task runPercolation(type: JavaExec) {
 //   args "etc/collineat/input8.txt"
 // }
 
-runPercolation.dependsOn checkstyleMain
+run.dependsOn checkstyleMain
+run.dependsOn findbugsMain

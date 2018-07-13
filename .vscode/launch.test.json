@@ -1,0 +1,30 @@
+{
+    "run": {
+        "default": "",
+        "items": [
+            {
+                "name": "princeton-algorithms",
+                "projectName": "princeton-algorithms",
+                "workingDirectory": "/Users/kondrat/Documents/Projects/princeton-algorithms",
+                "args": [],
+                "vmargs": [],
+                "env": {},
+                "preLaunchTask": ""
+            }
+        ]
+    },
+    "debug": {
+        "default": "",
+        "items": [
+            {
+                "name": "princeton-algorithms",
+                "projectName": "princeton-algorithms",
+                "workingDirectory": "/Users/kondrat/Documents/Projects/princeton-algorithms",
+                "args": [],
+                "vmargs": [],
+                "env": {},
+                "preLaunchTask": ""
+            }
+        ]
+    }
+}
