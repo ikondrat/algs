@@ -8,12 +8,13 @@ import java.util.Arrays;
 
 public class MergeTest {
     @Test public void testMergeInt() {
-        Comparable<Integer>[] params = new Comparable[3];
+        
+        Comparable[] params = new Comparable[3];
         params[0] = 3;
         params[1] = 2;
         params[2] = 1;
 
-        Comparable<Integer>[] expected = new Comparable[3];
+        Comparable[] expected = new Comparable[3];
         expected[0] = 1;
         expected[1] = 2;
         expected[2] = 3;
