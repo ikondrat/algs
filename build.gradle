@@ -65,11 +65,13 @@ task runPercolation(type: JavaExec, dependsOn: checkstyleMain) {
   args "etc/percolation/input20.txt"
 }
 
-// task BruteCollinearPoints(type: JavaExec) {
-//   classpath sourceSets.main.runtimeClasspath
-//   main = "BruteCollinearPoints"
-//   args "etc/collineat/input8.txt"
-// }
+task createDistCollinear(type: Zip){
+  archiveName="collinear.zip"
+  destinationDir = file('build/dists/')
+  from (file('./src/main/java/BruteCollinearPoints.java'))
+  from (file('./src/main/java/Point.java'))
+  from (file('./src/main/java/FastCollinearPoints.java'))
+}
 
 run.dependsOn checkstyleMain
 run.dependsOn findbugsMain
