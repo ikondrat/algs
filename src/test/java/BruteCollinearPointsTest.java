@@ -4,7 +4,7 @@
 // import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-// import static org.junit.Assert.*;
+import static org.junit.Assert.*;
 
 public class BruteCollinearPointsTest {
     @Test(expected = IllegalArgumentException.class) public void testIllegalArgumentException() {
@@ -17,26 +17,34 @@ public class BruteCollinearPointsTest {
         BruteCollinearPoints bp = new BruteCollinearPoints(points);
     }
 
-    @Test(expected = IllegalArgumentException.class) public void testDuplicate() {
+    @Test(expected = IllegalArgumentException.class) public void testNullInCOnstructor() {
         Point[] points = new Point[2];
         points[0] = new Point(10, 20);
         points[1] = new Point(10, 20);
+        BruteCollinearPoints bp = new BruteCollinearPoints(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class) public void testNullPoint() {
+        Point[] points = {
+            new Point(10, 20),
+            new Point(10, 20)
+        };
+        points[0] = null;
         BruteCollinearPoints bp = new BruteCollinearPoints(points);
     }
 
     @Test public void testBasic() {
-        Point[] points = new Point[7];
-        points[0] = new Point(0, 0);
-        points[1] = new Point(5, 5);
-        points[2] = new Point(2, 1);
-        points[3] = new Point(2, 2);
-        points[4] = new Point(7, 9);
-        points[5] = new Point(9, 9);
-        points[6] = new Point(10, 10);
+        Point[] points = {
+            new Point(0, 0),
+            new Point(5, 5),
+            new Point(2, 2),
+            new Point(4, 4)
+        };
+
         BruteCollinearPoints bp = new BruteCollinearPoints(points);
-        // assertEquals(
-        //     1,
-        //     bp.segments().length
-        // );
+        assertEquals(
+            1,
+            bp.segments().length
+        );
     }
 }

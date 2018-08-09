@@ -44,4 +44,73 @@ public class PointTest {
         points[0].drawTo(points[3]);
         StdDraw.show();
     }
+
+    @Test public void testToString() {
+
+        Point p = new Point(100, 200);
+        assertEquals(
+            p.toString(),
+            "100,200"
+        );
+    }
+
+    // The compareTo() method should compare points by their y-coordinates, breaking ties by their x-coordinates. 
+    // Formally, the invoking point (x0, y0) is less than the argument point (x1, y1) if and only if either y0 < y1 or if y0 = y1 and x0 < x1.
+    @Test public void testCompareTo() {
+
+        Point p1 = new Point(100, 200);
+        Point p2 = new Point(50, 60);
+        Point p3 = new Point(40, 60);
+        Point p4 = new Point(40, 60);
+        
+        assertEquals(
+            -1,
+            p2.compareTo(p1)
+        );
+        assertEquals(
+            1,
+            p1.compareTo(p2)
+        );
+        assertEquals(
+            -1,
+            p3.compareTo(p2)
+        );
+        assertEquals(
+            0,
+            p3.compareTo(p4)
+        );
+    }
+
+    @Test public void testSlopeTo() {
+        // The slopeTo() method should return the slope between the invoking point (x0, y0) and the argument point (x1, y1), 
+        // which is given by the formula (y1 − y0) / (x1 − x0). 
+        // Treat the slope of a horizontal line segment as positive zero; 
+        // treat the slope of a vertical line segment as positive infinity; 
+        // treat the slope of a degenerate line segment (between a point and itself) as negative infinity.
+        Point p1 = new Point(20, 30);
+        Point p2 = new Point(4, 5);
+
+        assertEquals(
+            1.5625,
+            p1.slopeTo(p2),
+            0
+        );
+
+    }
+
+    @Test public void testComparator() {
+        // The slopeTo() method should return the slope between the invoking point (x0, y0) and the argument point (x1, y1), 
+        // which is given by the formula (y1 − y0) / (x1 − x0). 
+        // Treat the slope of a horizontal line segment as positive zero; 
+        // treat the slope of a vertical line segment as positive infinity; 
+        // treat the slope of a degenerate line segment (between a point and itself) as negative infinity.
+        Point p1 = new Point(20, 30);
+        Point p2 = new Point(4, 5);
+
+        assertEquals(
+            1,
+            p1.compareTo(p2)
+        );
+
+    }
 }

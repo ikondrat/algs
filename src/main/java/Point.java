@@ -9,7 +9,7 @@ public class Point implements Comparable<Point> {
     public Point(int x0, int y0) {
         this.x = x0;
         this.y = y0;
-   }
+    }
 
     // draws this point
     public void draw() {
@@ -29,7 +29,10 @@ public class Point implements Comparable<Point> {
 
     // compare two points by y-coordinates, breaking ties by x-coordinates
     public int compareTo(Point that) {
-        return this.y == that.y ? this.x - that.x : this.y - that.y;
+        if (this.y < that.y) return -1;
+        else if (this.y == that.y && this.x < that.x) return -1;
+        else if (this.y == that.y && this.x == that.x) return 0;
+        else return 1;
     }
 
     // the slope between this point and that point
