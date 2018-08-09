@@ -35,7 +35,18 @@
             "stopOnEntry": false,
             "projectName": "princeton-algorithms",
             "mainClass": "BruteCollinearPoints",
-            "args": "etc/collinear/rs1423.txt"
+            "args": "etc/collinear/input8.txt"
+        },
+        {
+            "type": "java",
+            "name": "FastCollinearPoints",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "projectName": "princeton-algorithms",
+            "mainClass": "FastCollinearPoints",
+            "args": "etc/collinear/input8.txt"
         },
         {
             "type": "java",
