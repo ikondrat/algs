@@ -22,9 +22,17 @@ public class BruteCollinearPointsTest {
     @Test(expected = IllegalArgumentException.class) public void testNullPoint() {
         Point[] points = {
             new Point(10, 20),
-            new Point(10, 20)
+            new Point(10, 25)
         };
         points[0] = null;
+        BruteCollinearPoints bp = new BruteCollinearPoints(points);
+    }
+
+    @Test(expected = IllegalArgumentException.class) public void testDuplicatedPoint() {
+        Point[] points = {
+            new Point(10, 20),
+            new Point(10, 20)
+        };
         BruteCollinearPoints bp = new BruteCollinearPoints(points);
     }
 

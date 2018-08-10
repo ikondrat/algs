@@ -14,17 +14,23 @@ public class BruteCollinearPoints {
         }
 
         lineSegments = new ArrayList<>();
-        ArrayList<String> pKeys = new ArrayList<>();
-        for (int i = 0; i < points.length - 1; i++) {
-            if (points[i] == null || pKeys.contains(points[i].toString())) {
-                throw new java.lang.IllegalArgumentException("argument is null");
+        ArrayList<Point> pKeys = new ArrayList<>();
+
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] == null) {
+                throw new java.lang.IllegalArgumentException("one of the Point is null");
             }
-            pKeys.add(points[i].toString());
+            for (int j = 0; j < pKeys.size(); j++) {
+                if (pKeys.get(j).compareTo(points[i]) == 0) {
+                    throw new java.lang.IllegalArgumentException("duplicated point");
+                }
+            }
+            pKeys.add(points[i]);
+        }
+
+        for (int i = 0; i < points.length - 1; i++) {
             ArrayList<Double> slopes = new ArrayList<>();
             for (int j = i + 1; j < points.length; j++) {
-                if (points[j] == null) {
-                    throw new java.lang.IllegalArgumentException("argument is null");
-                }
                 double key = points[i].slopeTo(points[j]);
                 if (slopes.contains(key)) continue;
                 slopes.add(key);
@@ -36,7 +42,7 @@ public class BruteCollinearPoints {
                 Point[] spoints = new Point[4];
                 spoints[0] = points[i];
                 for (int y = i + 1; y < points.length && n < 5; y++) {
-                    if (slope == points[i].slopeTo(points[y])) {
+                    if (((Double) slope).equals(points[i].slopeTo(points[y]))) {
                         spoints[n++] = points[y];
                     }
                 }
