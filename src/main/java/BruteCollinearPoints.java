@@ -14,19 +14,24 @@ public class BruteCollinearPoints {
         }
 
         lineSegments = new ArrayList<>();
+        ArrayList<String> pKeys = new ArrayList<>();
         for (int i = 0; i < points.length - 1; i++) {
+            if (points[i] == null || pKeys.contains(points[i].toString())) {
+                throw new java.lang.IllegalArgumentException("argument is null");
+            }
+            pKeys.add(points[i].toString());
             ArrayList<Double> slopes = new ArrayList<>();
             for (int j = i + 1; j < points.length; j++) {
+                if (points[j] == null) {
+                    throw new java.lang.IllegalArgumentException("argument is null");
+                }
                 double key = points[i].slopeTo(points[j]);
                 if (slopes.contains(key)) continue;
                 slopes.add(key);
             }
 
-            ArrayList<Point[]> slopesPoints = new ArrayList<>();
-            
             for (int j = 0; j < slopes.size(); j++) {
                 double slope = slopes.get(j);
-
                 int n = 1;
                 Point[] spoints = new Point[4];
                 spoints[0] = points[i];
@@ -35,7 +40,7 @@ public class BruteCollinearPoints {
                         spoints[n++] = points[y];
                     }
                 }
-                if (n == 4) {
+                if (((Integer) n).equals(4)) {
                     Arrays.sort(spoints);
                     lineSegments.add(new LineSegment(spoints[0], spoints[n - 1]));
                 }
