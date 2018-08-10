@@ -3,12 +3,9 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
 
 public class BruteCollinearPoints {
-    private HashMap<String, LineSegment> lineSegments;
+    private final ArrayList<LineSegment> lineSegments;
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
@@ -16,39 +13,34 @@ public class BruteCollinearPoints {
             throw new java.lang.IllegalArgumentException("arguments is null");
         }
 
-        Arrays.sort(points);
-        lineSegments = new HashMap<>();
-        for (int i = 0; i < points.length; i++) {
-            HashMap<Double, ArrayList<Integer>> hmap = new HashMap<>();
-            for (int j = 0; j < points.length; j++) {
-                if (i == j) continue;
-                double slopeKey = points[i].slopeTo(points[j]);
-                if (hmap.containsKey(slopeKey)) {
-                    ArrayList<Integer> p = hmap.get(slopeKey);
-                    p.add(j);
-                } else {
-                    ArrayList<Integer> p = new ArrayList<>();
-                    p.add(i);
-                    p.add(j);
-                    hmap.put(slopeKey, p);
+        lineSegments = new ArrayList<>();
+        for (int i = 0; i < points.length - 1; i++) {
+            ArrayList<Double> slopes = new ArrayList<>();
+            for (int j = i + 1; j < points.length; j++) {
+                double key = points[i].slopeTo(points[j]);
+                if (slopes.contains(key)) continue;
+                slopes.add(key);
+            }
+
+            ArrayList<Point[]> slopesPoints = new ArrayList<>();
+            
+            for (int j = 0; j < slopes.size(); j++) {
+                double slope = slopes.get(j);
+
+                int n = 1;
+                Point[] spoints = new Point[4];
+                spoints[0] = points[i];
+                for (int y = i + 1; y < points.length && n < 5; y++) {
+                    if (slope == points[i].slopeTo(points[y])) {
+                        spoints[n++] = points[y];
+                    }
+                }
+                if (n == 4) {
+                    Arrays.sort(spoints);
+                    lineSegments.add(new LineSegment(spoints[0], spoints[n - 1]));
                 }
             }
 
-            for (Map.Entry<Double, ArrayList<Integer>> entry : hmap.entrySet()) {
-                ArrayList<Integer> slopePoints = entry.getValue();
-                
-                if (slopePoints.size() > 3) {
-                    Collections.sort(slopePoints);
-                    LineSegment ls = new LineSegment(
-                        points[slopePoints.get(0)], 
-                        points[slopePoints.get(slopePoints.size() - 1)]
-                    );
-                    String k = ls.toString();
-                    if (!lineSegments.containsKey(k)) {
-                        lineSegments.put(k, ls);
-                    }
-                }
-            }
         }
     }
 
@@ -60,7 +52,7 @@ public class BruteCollinearPoints {
     // the line segments
     public LineSegment[] segments() {
         LineSegment[] sgArr = new LineSegment[lineSegments.size()];
-        return lineSegments.values().toArray(sgArr);
+        return lineSegments.toArray(sgArr);
     }
 
     public static void main(String[] args) {

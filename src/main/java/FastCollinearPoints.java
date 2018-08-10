@@ -3,12 +3,10 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
 
 public class FastCollinearPoints {
-    private HashMap<String, LineSegment> lineSegments;
+    private final ArrayList<String> lineSegmentsKeys;
+    private final ArrayList<LineSegment> lineSegmentsValues;
 
     // finds all line segments containing 4 points
     public FastCollinearPoints(Point[] points) {
@@ -17,50 +15,56 @@ public class FastCollinearPoints {
         }
 
         Arrays.sort(points);
-        lineSegments = new HashMap<>();
+        lineSegmentsKeys = new ArrayList<>();
+        lineSegmentsValues = new ArrayList<>();
         for (int i = 0; i < points.length; i++) {
-            HashMap<Double, ArrayList<Integer>> hmap = new HashMap<>();
+            ArrayList<Double> slopes = new ArrayList<>();
+            ArrayList<ArrayList<Integer>> slopesPointsIndexes = new ArrayList<>();
             for (int j = 0; j < points.length; j++) {
                 if (i == j) continue;
                 double slopeKey = points[i].slopeTo(points[j]);
-                if (hmap.containsKey(slopeKey)) {
-                    ArrayList<Integer> p = hmap.get(slopeKey);
+                if (slopes.contains(slopeKey)) {
+                    int index = slopes.indexOf(slopeKey);
+                    ArrayList<Integer> p = slopesPointsIndexes.get(index);
                     p.add(j);
                 } else {
+                    slopes.add(slopeKey);
+                    int index = slopes.indexOf(slopeKey);
                     ArrayList<Integer> p = new ArrayList<>();
                     p.add(i);
                     p.add(j);
-                    hmap.put(slopeKey, p);
+                    slopesPointsIndexes.add(index, p);
                 }
             }
 
-            for (Map.Entry<Double, ArrayList<Integer>> entry : hmap.entrySet()) {
-                ArrayList<Integer> slopePoints = entry.getValue();
-                
-                if (slopePoints.size() > 3) {
-                    Collections.sort(slopePoints);
+            slopesPointsIndexes.forEach(sp -> {
+                if (sp.size() > 3) {
                     LineSegment ls = new LineSegment(
-                        points[slopePoints.get(0)], 
-                        points[slopePoints.get(slopePoints.size() - 1)]
+                        points[sp.get(0)], 
+                        points[sp.get(sp.size() - 1)]
                     );
+
                     String k = ls.toString();
-                    if (!lineSegments.containsKey(k)) {
-                        lineSegments.put(k, ls);
+
+                    if (!lineSegmentsKeys.contains(k)) {
+                        lineSegmentsKeys.add(k);
+                        int index = lineSegmentsKeys.indexOf(k);
+                        lineSegmentsValues.add(index, ls);
                     }
                 }
-            }
+            });
         }
     }
 
     // the number of line segments
     public int numberOfSegments() {
-        return lineSegments.size();
+        return lineSegmentsValues.size();
     }
 
     // the line segments
     public LineSegment[] segments() {
-        LineSegment[] sgArr = new LineSegment[lineSegments.size()];
-        return lineSegments.values().toArray(sgArr);
+        LineSegment[] sgArr = new LineSegment[lineSegmentsValues.size()];
+        return lineSegmentsValues.toArray(sgArr);
     }
 
     public static void main(String[] args) {

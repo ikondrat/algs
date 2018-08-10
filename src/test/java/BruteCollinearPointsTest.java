@@ -17,14 +17,15 @@ public class BruteCollinearPointsTest {
         BruteCollinearPoints bp = new BruteCollinearPoints(points);
     }
 
-    @Test(expected = IllegalArgumentException.class) public void testNullInCOnstructor() {
+    @Test(expected = IllegalArgumentException.class) 
+    public void testNullInCOnstructor() {
         Point[] points = new Point[2];
         points[0] = new Point(10, 20);
         points[1] = new Point(10, 20);
         BruteCollinearPoints bp = new BruteCollinearPoints(null);
     }
 
-    @Test(expected = IllegalArgumentException.class) public void testNullPoint() {
+    @Test(expected = NullPointerException.class) public void testNullPoint() {
         Point[] points = {
             new Point(10, 20),
             new Point(10, 20)
@@ -33,7 +34,8 @@ public class BruteCollinearPointsTest {
         BruteCollinearPoints bp = new BruteCollinearPoints(points);
     }
 
-    @Test public void testBasic() {
+    @Test 
+    public void testBasic() {
         Point[] points = {
             new Point(0, 0),
             new Point(5, 5),

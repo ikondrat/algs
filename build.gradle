@@ -65,9 +65,9 @@ task runPercolation(type: JavaExec, dependsOn: checkstyleMain) {
   args "etc/percolation/input20.txt"
 }
 
-task createDistCollinear(type: Zip){
+task createDistCollinear(type: Zip, dependsOn: checkstyleMain){
   archiveName="collinear.zip"
-  destinationDir = file('build/dists/')
+  destinationDir = file('build/distributions/')
   from (file('./src/main/java/BruteCollinearPoints.java'))
   from (file('./src/main/java/Point.java'))
   from (file('./src/main/java/FastCollinearPoints.java'))
