@@ -9,24 +9,9 @@ public class BruteCollinearPoints {
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
-        if (points == null) {
-            throw new java.lang.IllegalArgumentException("arguments is null");
-        }
-
+        validate(points);
         lineSegments = new ArrayList<>();
-        ArrayList<Point> pKeys = new ArrayList<>();
-
-        for (int i = 0; i < points.length; i++) {
-            if (points[i] == null) {
-                throw new java.lang.IllegalArgumentException("one of the Point is null");
-            }
-            for (int j = 0; j < pKeys.size(); j++) {
-                if (pKeys.get(j).compareTo(points[i]) == 0) {
-                    throw new java.lang.IllegalArgumentException("duplicated point");
-                }
-            }
-            pKeys.add(points[i]);
-        }
+        
 
         for (int i = 0; i < points.length - 1; i++) {
             ArrayList<Double> slopes = new ArrayList<>();
@@ -52,6 +37,24 @@ public class BruteCollinearPoints {
                 }
             }
 
+        }
+    }
+
+    private void validate(Point[] points) {
+        if (points == null) {
+            throw new java.lang.IllegalArgumentException("arguments is null");
+        }
+        ArrayList<Point> pKeys = new ArrayList<>();
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] == null) {
+                throw new java.lang.IllegalArgumentException("one of the Point is null");
+            }
+            for (int j = 0; j < pKeys.size(); j++) {
+                if (pKeys.get(j).compareTo(points[i]) == 0) {
+                    throw new java.lang.IllegalArgumentException("duplicated point");
+                }
+            }
+            pKeys.add(points[i]);
         }
     }
 

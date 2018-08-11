@@ -1,70 +1,74 @@
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
+
 import java.util.Arrays;
 import java.util.ArrayList;
 
 public class FastCollinearPoints {
-    private final ArrayList<String> lineSegmentsKeys;
-    private final ArrayList<LineSegment> lineSegmentsValues;
+    private final ArrayList<LineSegment> lineSegments;
 
-    // finds all line segments containing 4 points
-    public FastCollinearPoints(Point[] points) {
+    public FastCollinearPoints(Point[] spoints) {
+        validate(spoints);
+        lineSegments = new ArrayList<>();
+        Point[] points;
+
+        points = Arrays.copyOf(spoints, spoints.length);
+        for (Point startPoint : spoints) {
+            Arrays.sort(points, startPoint.slopeOrder());
+
+            ArrayList<Point> slopePoints = new ArrayList<>();
+            double previousSlope = Double.NEGATIVE_INFINITY;
+            slopePoints.add(startPoint);
+
+            for (int i = 1; i < points.length; i++) {
+                Point comparePoint = points[i];
+                double slope = startPoint.slopeTo(comparePoint);
+
+                boolean isLast = i == points.length - 1;
+                if (i > 1 && (!((Double) slope).equals(previousSlope) || isLast)) {
+                    int n = slopePoints.size();
+                    if (n >= 3) {
+                        lineSegments.add(new LineSegment(slopePoints.get(0), slopePoints.get(n - 1)));
+                    }
+                    if (!isLast) {
+                        slopePoints.clear();
+                    }
+                }
+                slopePoints.add(comparePoint);
+                previousSlope = slope;
+            }
+            points = Arrays.copyOfRange(spoints, 1, spoints.length - 1);
+        }
+    }
+
+    private void validate(Point[] points) {
         if (points == null) {
             throw new java.lang.IllegalArgumentException("arguments is null");
         }
-
-        Arrays.sort(points);
-        lineSegmentsKeys = new ArrayList<>();
-        lineSegmentsValues = new ArrayList<>();
+        ArrayList<Point> pKeys = new ArrayList<>();
         for (int i = 0; i < points.length; i++) {
-            ArrayList<Double> slopes = new ArrayList<>();
-            ArrayList<ArrayList<Integer>> slopesPointsIndexes = new ArrayList<>();
-            for (int j = 0; j < points.length; j++) {
-                if (i == j) continue;
-                double slopeKey = points[i].slopeTo(points[j]);
-                if (slopes.contains(slopeKey)) {
-                    int index = slopes.indexOf(slopeKey);
-                    ArrayList<Integer> p = slopesPointsIndexes.get(index);
-                    p.add(j);
-                } else {
-                    slopes.add(slopeKey);
-                    int index = slopes.indexOf(slopeKey);
-                    ArrayList<Integer> p = new ArrayList<>();
-                    p.add(i);
-                    p.add(j);
-                    slopesPointsIndexes.add(index, p);
+            if (points[i] == null) {
+                throw new java.lang.IllegalArgumentException("one of the Point is null");
+            }
+            for (int j = 0; j < pKeys.size(); j++) {
+                if (pKeys.get(j).compareTo(points[i]) == 0) {
+                    throw new java.lang.IllegalArgumentException("duplicated point");
                 }
             }
-
-            slopesPointsIndexes.forEach(sp -> {
-                if (sp.size() > 3) {
-                    LineSegment ls = new LineSegment(
-                        points[sp.get(0)], 
-                        points[sp.get(sp.size() - 1)]
-                    );
-
-                    String k = ls.toString();
-
-                    if (!lineSegmentsKeys.contains(k)) {
-                        lineSegmentsKeys.add(k);
-                        int index = lineSegmentsKeys.indexOf(k);
-                        lineSegmentsValues.add(index, ls);
-                    }
-                }
-            });
+            pKeys.add(points[i]);
         }
     }
 
     // the number of line segments
     public int numberOfSegments() {
-        return lineSegmentsValues.size();
+        return lineSegments.size();
     }
 
     // the line segments
     public LineSegment[] segments() {
-        LineSegment[] sgArr = new LineSegment[lineSegmentsValues.size()];
-        return lineSegmentsValues.toArray(sgArr);
+        LineSegment[] sgArr = new LineSegment[lineSegments.size()];
+        return lineSegments.toArray(sgArr);
     }
 
     public static void main(String[] args) {
