@@ -14,9 +14,13 @@
             "command": "./gradlew runPercolation"
         },
         {
-            "label": "BruteCollinearPoints",
+            "label": "createDistCollinear",
             "type": "shell",
-            "command": "./gradlew BruteCollinearPoints"
+            "command": "./gradlew createDistCollinear",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
