@@ -51,4 +51,24 @@ public class FastCollinearPointsTest {
             bp.segments().length
         );
     }
+
+    @Test
+    public void testForNoDuplicatedSegments() {
+        Point[] points = {
+            new Point(1000, 0),
+            new Point(0, 1000),
+            new Point(3000, 7000),
+            new Point(7000, 3000),
+            new Point(20000, 21000),
+            new Point(3000, 4000),
+            new Point(14000, 15000),
+            new Point(6000, 7000)
+        };
+
+        FastCollinearPoints bp = new FastCollinearPoints(points);
+        assertEquals(
+            1,
+            bp.segments().length
+        );
+    }
 }
