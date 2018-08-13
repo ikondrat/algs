@@ -53,10 +53,10 @@ public class FastCollinearPointsTest {
     }
 
     @Test
-    public void testForNoDuplicatedSegments() {
+    public void testForCorrectNumberOgSegments() {
         Point[] points = {
-            new Point(1000, 0),
-            new Point(0, 1000),
+            new Point(10000, 0),
+            new Point(0, 10000),
             new Point(3000, 7000),
             new Point(7000, 3000),
             new Point(20000, 21000),
@@ -67,8 +67,33 @@ public class FastCollinearPointsTest {
 
         FastCollinearPoints bp = new FastCollinearPoints(points);
         assertEquals(
-            1,
+            2,
             bp.segments().length
+        );
+    }
+
+
+    @Test
+    public void testForCorrectSegmentsKeys() {
+        Point[] points = {
+            new Point(10000, 0),
+            new Point(0, 10000),
+            new Point(3000, 7000),
+            new Point(7000, 3000),
+            new Point(20000, 21000),
+            new Point(3000, 4000),
+            new Point(14000, 15000),
+            new Point(6000, 7000)
+        };
+
+        FastCollinearPoints bp = new FastCollinearPoints(points);
+        assertEquals(
+            bp.segments()[0].toString(),
+            "10000,0 -> 0,10000"
+        );
+        assertEquals(
+            bp.segments()[1].toString(),
+            "3000,4000 -> 20000,21000"
         );
     }
 }
