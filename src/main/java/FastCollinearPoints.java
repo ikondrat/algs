@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 public class FastCollinearPoints {
-    private static ArrayList<LineSegment> lineSegments;
-    private static ArrayList<String> lineSegmentsKeys;
+    private ArrayList<LineSegment> lineSegments;
+    private ArrayList<String> lineSegmentsKeys;
 
     public FastCollinearPoints(Point[] spoints) {
         validate(spoints);
@@ -23,7 +23,7 @@ public class FastCollinearPoints {
             for (int j = 0; j < points.size(); j++) {
                 Point comparePoint = points.get(j);
                 double slope = startPoint.slopeTo(comparePoint);
-                if (previousSlope != slope && previousSlope != Double.NEGATIVE_INFINITY) {
+                if (!((Double) previousSlope).equals(slope) && previousSlope != Double.NEGATIVE_INFINITY) {
                     addSegment(slopePoints);
                     slopePoints.clear();
                     slopePoints.add(startPoint);
@@ -35,7 +35,7 @@ public class FastCollinearPoints {
         }
     }
 
-    private static void addSegment(ArrayList<Point> points) {
+    private void addSegment(ArrayList<Point> points) {
         if (points.size() >= 4) {
             Point[] ps = new Point[points.size()];
 
