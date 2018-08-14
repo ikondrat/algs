@@ -17,8 +17,8 @@ public class Insertion {
     }
 
     private static void exch(int[] arr, int i, int j) {
-        arr[i] = arr[i] ^ arr[j];
-        arr[j] = arr[i] ^ arr[j];
-        arr[i] = arr[i] ^ arr[j];
+        int x = arr[i];
+        arr[i] = arr[j];
+        arr[j] = x;
     }
 }

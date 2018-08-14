@@ -3,12 +3,11 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.In;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.ArrayList;
 
 public class FastCollinearPoints {
-    private final ArrayList<LineSegment> lineSegments;
-    private final ArrayList<String> lineSegmentsKeys;
+    private static ArrayList<LineSegment> lineSegments;
+    private static ArrayList<String> lineSegmentsKeys;
 
     public FastCollinearPoints(Point[] spoints) {
         validate(spoints);
@@ -16,68 +15,42 @@ public class FastCollinearPoints {
         lineSegmentsKeys = new ArrayList<>();
         double previousSlope = Double.NEGATIVE_INFINITY;
 
-        Point[] points = Arrays.copyOf(spoints, spoints.length);
-        for (Point startPoint : spoints) {
+        for (int i = 0; i < spoints.length; i++) {
+            Point startPoint = spoints[i];
+            ArrayList<Point> points = new ArrayList<>(Arrays.asList(spoints));
             ArrayList<Point> slopePoints = new ArrayList<>();
-            Arrays.sort(points, startPoint.slopeOrder());
-            for (Point comparePoint : points) {
-                if (startPoint.equals(comparePoint)) continue;
+            points.sort(startPoint.slopeOrder());
+            for (int j = 0; j < points.size(); j++) {
+                Point comparePoint = points.get(j);
                 double slope = startPoint.slopeTo(comparePoint);
                 if (previousSlope != slope && previousSlope != Double.NEGATIVE_INFINITY) {
-                    if (slopePoints.size() >= 3) {
-                        slopePoints.add(startPoint);
-                        Collections.sort(slopePoints);
-                        LineSegment ls = new LineSegment(
-                            slopePoints.get(0),
-                            slopePoints.get(slopePoints.size() - 1)
-                        );
-                        String key = ls.toString();
-                        if (!lineSegmentsKeys.contains(key)) {
-                            lineSegments.add(ls);
-                            lineSegmentsKeys.add(key);
-                        }
-                    }
+                    addSegment(slopePoints);
                     slopePoints.clear();
+                    slopePoints.add(startPoint);
                 }
                 slopePoints.add(comparePoint);
                 previousSlope = slope;
             }
-            if (slopePoints.size() >= 3) {
-                slopePoints.add(startPoint);
-                Collections.sort(slopePoints);
-                LineSegment ls = new LineSegment(
-                    slopePoints.get(0),
-                    slopePoints.get(slopePoints.size() - 1)
-                );
-                String key = ls.toString();
-                if (!lineSegmentsKeys.contains(key)) {
-                    lineSegments.add(ls);
-                    lineSegmentsKeys.add(key);
-                }
+            addSegment(slopePoints);
+        }
+    }
+
+    private static void addSegment(ArrayList<Point> points) {
+        if (points.size() >= 4) {
+            Point[] ps = new Point[points.size()];
+
+            points.toArray(ps);
+            Arrays.sort(ps);
+            LineSegment ls = new LineSegment(
+                ps[0],
+                ps[ps.length - 1]
+            );
+            String key = ls.toString();
+            if (!lineSegmentsKeys.contains(key)) {
+                lineSegments.add(ls);
+                lineSegmentsKeys.add(key);
             }
         }
-        // for (int i = 0; i < spoints.length; i++) {
-        //     Arrays.sort(spoints, i + 1, spoints.length - 1, spoints[i].slopeOrder());
-        //     Point startPoint = spoints[i];
-
-        //     int n = 1;
-        //     for (int j = 0; j < spoints.length; j++) {
-        //         if (i == j) continue;
-        //         Point comparePoint = spoints[j];
-        //         double slope = startPoint.slopeTo(comparePoint);
-
-        //         if (!((Double) slope).equals(previousSlope)) {
-        //             if (n >= 3) {
-        //                 int index = j - n;
-        //                 Arrays.sort(spoints, index, j);
-        //                 lineSegments.add(new LineSegment(spoints[j - n], spoints[j]));
-        //             }
-        //             n = 0;
-        //         }
-        //         previousSlope = slope;
-        //         n++;
-        //     }
-        // }
     }
 
     private void validate(Point[] points) {

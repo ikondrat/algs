@@ -25,20 +25,39 @@
                           SF_SWITCH_NO_DEFAULT,
                           NM_METHOD_NAMING_CONVENTION,
                           NM_CLASS_NAMING_CONVENTION,
+                          NM_FIELD_NAMING_CONVENTION,
                           EQ_COMPARETO_USE_OBJECT_EQUALS" />
     </Match>
 
-    <!-- from fb-contrib-7.0.2.jar plugin -->
+    <!-- from fb-contrib-7.4.3.jar plugin -->
+    <!-- FCBL_FIELD_COULD_BE_LOCAL redundant with PMD -->  
+    <!-- PME_POOR_MANS_ENUM  we disallow enum and seems to have false positives -->
+    <!-- OCP_OVERLY_CONCRETE_PARAMETER wants Picture to be defines as java.awt.event.ActionListener -->
+
+    <!-- TODO: Java 7 - replace CHARSET_NAME with java.nio.charset.StandardCharsets.UTF_8 and eliminate
+                        CSI_CHAR_SET_ISSUES_USE_STANDARD_CHARSET,
+                        CSI_CHAR_SET_ISSUES_USE_STANDARD_CHARSET_NAME,
+    -->
+
+    <!-- TODO: use java.nio.file.Files.newInputStream and java.nio.file.Files.newOutputStream
+               to eliminate IOI_USE_OF_FILE_STREAM_CONSTRUCTORS 
+    -->
+
     <Match>
-        <BugPattern name="BL_BURYING_LOGIC,
+        <BugPattern name="AI_ANNOTATION_ISSUES_NEEDS_NULLABLE,
+                          BL_BURYING_LOGIC,
                           CLI_CONSTANT_LIST_INDEX,
+                          CSI_CHAR_SET_ISSUES_USE_STANDARD_CHARSET,
                           CSI_CHAR_SET_ISSUES_USE_STANDARD_CHARSET_NAME,
                           EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS,
+                          FCBL_FIELD_COULD_BE_LOCAL,
+                          CNC_COLLECTION_NAMING_CONFUSION,
                           IMC_IMMATURE_CLASS_NO_EQUALS,
                           IMC_IMMATURE_CLASS_NO_PACKAGE,
                           IMC_IMMATURE_CLASS_NO_TOSTRING,
                           IMC_IMMATURE_CLASS_NO_HASHCODE,
                           IMC_IMMATURE_CLASS_WRONG_FIELD_ORDER,
+                          IOI_USE_OF_FILE_STREAM_CONSTRUCTORS,
                           ISB_EMPTY_STRING_APPENDING,
                           ISB_INEFFICIENT_STRING_BUFFERING,
                           ISB_TOSTRING_APPENDING,
@@ -46,9 +65,11 @@
                           MAC_MANUAL_ARRAY_COPY,
                           MDM_RANDOM_SEED,
                           OPM_OVERLY_PERMISSIVE_METHOD,
+                          OCP_OVERLY_CONCRETE_PARAMETER,
                           PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS,
                           PCAIL_POSSIBLE_CONSTANT_ALLOCATION_IN_LOOP,
                           PL_PARALLEL_LISTS,
+                          PME_POOR_MANS_ENUM,
                           PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS,
                           S508C_NON_TRANSLATABLE_STRING,
                           SACM_STATIC_ARRAY_CREATED_IN_METHOD,
@@ -63,13 +84,20 @@
 
     
 
-    <!-- Ignore DLS_DEAD_LOCAL_STORE for low confidence warnings
+    <!-- Ignore DLS_DEAD_LOCAL_STORE for low-confidence warnings (3)
          Otherwise it will flag code like the following:
              for (String x : set)
                  count++;
     -->
     <Match>
         <BugPattern name="DLS_DEAD_LOCAL_STORE, UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
+        <Confidence value="3" />
+    </Match>
+
+    <!-- Ignore SCRV_SUSPICIOUS_COMPARATOR_RETURN_VALUES for low-confidence warnings (3)
+         to avoid false positives in compare() -->
+    <Match>
+        <BugPattern name="SCRV_SUSPICIOUS_COMPARATOR_RETURN_VALUES" />
         <Confidence value="3" />
     </Match>
 
@@ -340,10 +368,36 @@
         <BugPattern name="HE_HASHCODE_USE_OBJECT_EQUALS" />
     </Match>
 
+    <!-- ok to call x.compareTo(x) when unit testing Term -->
+    <Match>
+        <Class name = "~(Term)(226)?" />
+        <Method name="main" />
+        <BugPattern name="SA_LOCAL_SELF_COMPARISON" />
+    </Match>
+
+    <!-- ok to call board.equals(null), board.equals(string), or board.equals(board) when unit testing Board -->
+    <Match>
+        <Class name = "~(Board)(226)?" />
+        <Method name="main" />
+        <BugPattern name="EC_NULL_ARG,EC_UNRELATED_TYPES,SA_LOCAL_SELF_COMPARISON" />
+    </Match>
+
     <!-- slider puzzle, before we've introduced hashCode() -->
     <Match>
         <Class name = "~(Board)(226)?" />
         <BugPattern name="HE_EQUALS_USE_HASHCODE" />
+    </Match>
+
+    <!-- SCUtility not very well designed, but it's our class -->
+    <Match>
+        <Class name = "~(SCUtility)" />
+        <BugPattern name="FCCD_FIND_CLASS_CIRCULAR_DEPENDENCY" />
+    </Match>
+
+    <!-- BoggleBoard doesn't implement hashCode() or equals() and does safe test for floating-point equality -->
+    <Match>
+        <Class name = "~(BoggleBoard)(226)?" />
+        <BugPattern name="FE_FLOATING_POINT_EQUALITY,HE_HASHCODE_USE_OBJECT_EQUALS" />
     </Match>
 
     <!--  ***********************************************************************  -->
@@ -373,7 +427,7 @@
         <BugPattern name="FCBL_FIELD_COULD_BE_LOCAL" />
     </Match>
 
-    <!-- allow methods to store values in variables with name "ignore"             -->
+    <!-- allow methods to store values in variables with name "ignore"  -->
     <Match>
         <Local name = "~.*[Ii]gnore.*" />
         <BugPattern name="DLS_DEAD_LOCAL_STORE" />
