@@ -35,7 +35,7 @@
             "stopOnEntry": false,
             "projectName": "princeton-algorithms",
             "mainClass": "BruteCollinearPoints",
-            "args": "etc/collinear/input8.txt"
+            "args": "etc/collinear/input40.txt"
         },
         {
             "type": "java",
@@ -46,7 +46,7 @@
             "stopOnEntry": false,
             "projectName": "princeton-algorithms",
             "mainClass": "FastCollinearPoints",
-            "args": "etc/collinear/input8.txt"
+            "args": "etc/collinear/input40.txt"
         },
         {
             "type": "java",
