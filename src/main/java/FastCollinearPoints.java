@@ -8,7 +8,6 @@ import java.util.ArrayList;
 public class FastCollinearPoints {
     private final ArrayList<LineSegment> lineSegments;
     private final ArrayList<String> lineSegmentsKeys;
-    private final ArrayList<String> pointKeys;
 
     public FastCollinearPoints(Point[] points) {
         double previousSlope = Double.NEGATIVE_INFINITY;
@@ -18,17 +17,16 @@ public class FastCollinearPoints {
         validate(points);
         lineSegmentsKeys = new ArrayList<>();
         lineSegments = new ArrayList<>();
-        pointKeys = new ArrayList<>();
+        Arrays.sort(points);
         for (int i = 0; i < points.length; i++) {
             sortPoint = points[i];
             if (points[i] == null) {
                 throw new java.lang.IllegalArgumentException("one of the Point is null");
             }
-            String key = points[i].toString();
-            if (pointKeys.contains(key)) {
+            
+            if (i > 0 && points[i].compareTo(points[i -1]) == 0) {
                 throw new java.lang.IllegalArgumentException("duplicated point");
             }
-            pointKeys.add(key);
             Point[] spoints = Arrays.copyOf(points, points.length);
             // group the points by slope
             Arrays.sort(spoints, sortPoint.slopeOrder());
