@@ -131,4 +131,24 @@ public class FastCollinearPointsTest {
             bp.segments()[1].toString()
         );
     }
+
+    @Test 
+    public void TestforInput9() {
+        Point[] points = {
+            new Point(9000, 9000),
+            new Point(8000, 8000),
+            new Point(7000, 7000),
+            new Point(6000, 6000),
+            new Point(5000, 5000),
+            new Point(4000, 4000),
+            new Point(3000, 3000),
+            new Point(2000, 2000),
+            new Point(1000, 1000)
+        };
+        FastCollinearPoints bp = new FastCollinearPoints(points);
+        assertEquals(
+            bp.numberOfSegments(),
+            1
+        );
+    }
 }
