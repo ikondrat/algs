@@ -44,18 +44,18 @@ public class BruteCollinearPoints {
         if (points == null) {
             throw new java.lang.IllegalArgumentException("arguments is null");
         }
-        ArrayList<Point> pKeys = new ArrayList<>();
-        for (int i = 0; i < points.length; i++) {
-            if (points[i] == null) {
-                throw new java.lang.IllegalArgumentException("one of the Point is null");
-            }
-            for (int j = 0; j < pKeys.size(); j++) {
-                if (pKeys.get(j).compareTo(points[i]) == 0) {
-                    throw new java.lang.IllegalArgumentException("duplicated point");
-                }
-            }
-            pKeys.add(points[i]);
-        }
+        // ArrayList<Point> pKeys = new ArrayList<>();
+        // for (int i = 0; i < points.length; i++) {
+        //     if (points[i] == null) {
+        //         throw new java.lang.IllegalArgumentException("one of the Point is null");
+        //     }
+        //     for (int j = 0; j < pKeys.size(); j++) {
+        //         if (pKeys.get(j).compareTo(points[i]) == 0) {
+        //             throw new java.lang.IllegalArgumentException("duplicated point");
+        //         }
+        //     }
+        //     pKeys.add(points[i]);
+        // }
     }
 
     // the number of line segments

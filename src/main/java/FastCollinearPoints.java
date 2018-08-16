@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class FastCollinearPoints {
     private final ArrayList<LineSegment> lineSegments;
     private final ArrayList<String> lineSegmentsKeys;
+    private final ArrayList<String> pointKeys;
 
     public FastCollinearPoints(Point[] points) {
         double previousSlope = Double.NEGATIVE_INFINITY;
@@ -17,18 +18,28 @@ public class FastCollinearPoints {
         validate(points);
         lineSegmentsKeys = new ArrayList<>();
         lineSegments = new ArrayList<>();
-
+        pointKeys = new ArrayList<>();
         for (int i = 0; i < points.length; i++) {
             sortPoint = points[i];
-
+            if (points[i] == null) {
+                throw new java.lang.IllegalArgumentException("one of the Point is null");
+            }
+            String key = points[i].toString();
+            if (pointKeys.contains(key)) {
+                throw new java.lang.IllegalArgumentException("duplicated point");
+            }
+            pointKeys.add(key);
             Point[] spoints = Arrays.copyOf(points, points.length);
             // group the points by slope
             Arrays.sort(spoints, sortPoint.slopeOrder());
             int cpCount = 0;
             int fromPoint = 1;
             for (int j = 1; j < spoints.length; j++) {
+                if (spoints[j] == null) {
+                    throw new java.lang.IllegalArgumentException("one of the Point is null");
+                }
                 comparePoint = spoints[j];
-                double slope = sortPoint.slopeTo(comparePoint);
+                double slope = getSlope(sortPoint, comparePoint);
 
                 if (!Double.isInfinite(previousSlope) && !equals(slope, previousSlope)) {
                     if (cpCount >= 3) {
@@ -81,21 +92,13 @@ public class FastCollinearPoints {
         return arrP;
     }
 
+    private Double getSlope(Point x, Point y) {
+        return x.slopeTo(y);
+    }
+
     private void validate(Point[] points) {
         if (points == null) {
             throw new java.lang.IllegalArgumentException("arguments is null");
-        }
-        ArrayList<Point> pKeys = new ArrayList<>();
-        for (int i = 0; i < points.length; i++) {
-            if (points[i] == null) {
-                throw new java.lang.IllegalArgumentException("one of the Point is null");
-            }
-            for (int j = 0; j < pKeys.size(); j++) {
-                if (pKeys.get(j).compareTo(points[i]) == 0) {
-                    throw new java.lang.IllegalArgumentException("duplicated point");
-                }
-            }
-            pKeys.add(points[i]);
         }
     }
 
