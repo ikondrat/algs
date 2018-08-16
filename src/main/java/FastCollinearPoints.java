@@ -18,9 +18,6 @@ public class FastCollinearPoints {
         lineSegmentsKeys = new ArrayList<>();
         lineSegments = new ArrayList<>();
 
-        // initial sort
-        Arrays.sort(points);
-        
         for (int i = 0; i < points.length; i++) {
             sortPoint = points[i];
 
