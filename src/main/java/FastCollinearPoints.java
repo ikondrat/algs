@@ -6,54 +6,67 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 public class FastCollinearPoints {
-    private ArrayList<LineSegment> segments;
-    private ArrayList<String> segmentsKeys;
+    private LineSegment[] lineSegments;
 
     public FastCollinearPoints(Point[] spoints) {
-        validate(spoints);
         double previousSlope = Double.NEGATIVE_INFINITY;
-        segments = new ArrayList<>();
-        segmentsKeys = new ArrayList<>();
-        for (Point startPoint: spoints) {
-            Point[] points = Arrays.copyOf(spoints, spoints.length);
-            Arrays.sort(points, startPoint.slopeOrder());
-            
-            ArrayList<Double> slopes = new ArrayList<>();
-            ArrayList<ArrayList<Point>> slopePoints = new ArrayList<>();
-            for (int j = 1; j < points.length; j++) {
-                Point comparePoint = points[j];
-                double slope = startPoint.slopeTo(comparePoint);
-                if (slopes.contains(slope)) {
-                    int index = slopes.indexOf(slope);
-                    slopePoints.get(index).add(comparePoint);
-                } else {
-                    slopes.add(slope);
-                    int index = slopes.indexOf(slope);
-                    ArrayList<Point> ps = new ArrayList<>();
-                    ps.add(comparePoint);
-                    slopePoints.add(index, ps);
+        Point sortPoint;
+        Point comparePoint;
+
+        validate(spoints);
+        ArrayList<LineSegment> segments = new ArrayList<>();
+
+        // initial sort
+        Arrays.sort(spoints);
+        
+        for (int i = 0; i < spoints.length; i++) {
+            sortPoint = spoints[i];
+            // group the points by slope
+            Arrays.sort(spoints, i, spoints.length, sortPoint.slopeOrder());
+            int cpCount = 0;
+            int fromPoint = i + 1;
+            for (int j = i + 1; j < spoints.length; j++) {
+                comparePoint = spoints[j];
+                double slope = sortPoint.slopeTo(comparePoint);
+
+                if (!Double.isInfinite(previousSlope) && !equals(slope, previousSlope)) {
+                    if (cpCount >= 3) {
+                        segments.add(
+                            getSegment(sortPoint, spoints, fromPoint, j - 1)
+                        );
+                    }
+                    cpCount = 0;
+                    fromPoint = j;
                 }
                 previousSlope = slope;
+                cpCount++;
             }
-            
-            for (double slope: slopes) {
-                int index = slopes.indexOf(slope);
-                int n = slopePoints.get(index).size();
-                if (n >= 3) {
-                    Point[] ps = new Point[n + 1];
-                    slopePoints.get(index).toArray(ps);
-                    ps[ps.length - 1] = startPoint;
-                    Arrays.sort(ps);
-                    String key = ps[0] + "," + ps[ps.length - 1];
-                    if (!segmentsKeys.contains(key)) {
-                        segments.add(
-                            new LineSegment(ps[0], ps[ps.length - 1])
-                        );
-                        segmentsKeys.add(key);
-                    }
-                }
+            if (cpCount >= 3) {
+                segments.add(
+                    getSegment(sortPoint, spoints, spoints.length - cpCount, spoints.length - 1)
+                );
             }
         }
+        lineSegments = new LineSegment[segments.size()];
+        segments.toArray(lineSegments);
+    }
+
+    private boolean equals(double x, double y) {
+        return ((Double) x).equals(y);
+    }
+
+    private LineSegment getSegment(Point sortPoint, Point[] arr, int from, int to) {
+        Arrays.sort(arr, from, to + 1);
+
+        Point fromPoint = (sortPoint.compareTo(arr[from]) == -1) ? 
+            sortPoint : 
+            arr[from];
+        Point toPoint = (sortPoint.compareTo(arr[to]) == 1) ? sortPoint : arr[to];
+        LineSegment ls = new LineSegment(
+            fromPoint,
+            toPoint
+        );
+        return ls;
     }
 
     private void validate(Point[] points) {
@@ -76,13 +89,12 @@ public class FastCollinearPoints {
 
     // the number of line segments
     public int numberOfSegments() {
-        return segments.size();
+        return lineSegments.length;
     }
 
     // the line segments
     public LineSegment[] segments() {
-        LineSegment[] sgArr = new LineSegment[segments.size()];
-        return segments.toArray(sgArr);
+        return lineSegments;
     }
 
     public static void main(String[] args) {

@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 
 public class FastCollinearPointsTest {
     @Test(expected = IllegalArgumentException.class) public void testIllegalArgumentException() {
-        FastCollinearPoints bp = new FastCollinearPoints(null);
+       new FastCollinearPoints(null);
     }
 
     @Test(expected = IllegalArgumentException.class) 
@@ -16,7 +16,7 @@ public class FastCollinearPointsTest {
         Point[] points = new Point[2];
         points[0] = new Point(10, 20);
         points[1] = new Point(10, 20);
-        FastCollinearPoints bp = new FastCollinearPoints(null);
+        new FastCollinearPoints(null);
     }
 
     @Test(expected = IllegalArgumentException.class) public void testNullPoint() {
@@ -25,7 +25,7 @@ public class FastCollinearPointsTest {
             new Point(10, 25)
         };
         points[0] = null;
-        FastCollinearPoints bp = new FastCollinearPoints(points);
+        new FastCollinearPoints(points);
     }
 
     @Test(expected = IllegalArgumentException.class) public void testDuplicatedPoint() {
@@ -33,7 +33,7 @@ public class FastCollinearPointsTest {
             new Point(10, 20),
             new Point(10, 20)
         };
-        FastCollinearPoints bp = new FastCollinearPoints(points);
+        new FastCollinearPoints(points);
     }
 
     @Test 
@@ -48,6 +48,25 @@ public class FastCollinearPointsTest {
         FastCollinearPoints bp = new FastCollinearPoints(points);
         assertEquals(
             1,
+            bp.segments().length
+        );
+    }
+
+    @Test
+    public void testFor2Segments() {
+        Point[] points = {
+            new Point(0, 0),
+            new Point(5, 5),
+            new Point(2, 2),
+            new Point(4, 4),
+            new Point(1, 2),
+            new Point(3, 2),
+            new Point(4, 2)
+        };
+
+        FastCollinearPoints bp = new FastCollinearPoints(points);
+        assertEquals(
+            2,
             bp.segments().length
         );
     }
