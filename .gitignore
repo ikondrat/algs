@@ -5,3 +5,4 @@ bin
 out
 .idea
 etc/8puzzle/.*
+etc/**/.iml
