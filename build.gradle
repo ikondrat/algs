@@ -41,14 +41,17 @@ apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 
 // exclude checkstyle using -x checkstyleMain
-checkstyleMain {
-    configProperties = ['basedir': "$rootDir/config/checkstyle"]
-    ignoreFailures = false
-    configFile = new File(rootDir, 'config/checkstyle/checkstyle.xml')
-}
+
 
 checkstyle {
     toolVersion = "8.5"
+
+    checkstyleMain {
+        configProperties = ['basedir': "$rootDir/config/checkstyle"]
+        ignoreFailures = false
+        source ='src/main/java'
+        configFile = new File(rootDir, 'config/checkstyle/checkstyle.xml')
+    }
 }
 
 spotbugs {

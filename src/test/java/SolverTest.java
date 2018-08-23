@@ -147,8 +147,45 @@ public class SolverTest {
         
         Solver s = new Solver(new Board(blocks));
         assertEquals(
-            20,
+            30,
             s.moves()
         );
+    }
+
+    @Test
+    public void test25Moves() {
+        int[][] blocks = {
+            {2, 5, 1, 3},
+            {9, 6, 12, 4},
+            {10, 14, 8, 0},
+            {13, 11, 15, 7}
+        };
+        
+        Solver s = new Solver(new Board(blocks));
+        assertEquals(
+            25,
+            s.moves()
+        );
+    }
+
+    @Test
+    public void test80Moves() {
+        int[][] blocks = {
+            {0, 12, 9, 13},
+            {15, 11, 10, 14},
+            {3, 7, 5, 6},
+            {4, 8, 2, 1}
+        };
+        
+        Solver s = new Solver(new Board(blocks));
+        assertEquals(
+            80,
+            s.moves()
+        );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNullException() {
+        Solver s = new Solver(null);
     }
 }

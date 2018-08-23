@@ -5,18 +5,15 @@ import edu.princeton.cs.algs4.StdOut;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.HashMap;
 import java.util.Comparator;
 
 public class Solver {
     private boolean isSolved = false;
-    private ArrayList<Board> solutions;
     private Node goalBoard;
 
     private class Node {
         public Board board;
         public int moves;
-        public boolean visited;
         public Node prev;
 
         Node(Board board, int moves) {
@@ -27,35 +24,41 @@ public class Solver {
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
-        ArrayList<Board> visited = new ArrayList<>();
-        MinPQ<Node> bs = new MinPQ<>(new MOrder());
+        if (initial == null) {
+            throw new java.lang.IllegalArgumentException(
+                "The board is expected to be passed into the constructor"
+            );
+        }
+        ArrayList<String> visitedBoards = new ArrayList<>();
+        MinPQ<Node> bs = new MinPQ<>(new PriorityOrder());
         bs.insert(new Node(initial, 0));
         while (!bs.isEmpty()) {
             Node current = bs.delMin();
-            if (current.visited) continue;
+            
             if (current.board.isGoal()) {
                 isSolved = true;
                 goalBoard = current;
                 break;
             }
+            if (visitedBoards.contains(current.board.toString())) continue;
             for (Board next: current.board.neighbors()) {
+                if (visitedBoards.contains(next.toString())) continue;
                 Node n = new Node(next, current.moves + 1);
                 n.prev = current;
                 bs.insert(n);
             }
-            current.visited = true;
+            visitedBoards.add(current.board.toString());
         }
     }
 
-    private static class MOrder implements Comparator<Node> {
-        private int getCost(Node b) {
-            int cost = b.board.manhattan() + b.moves;
-            return cost;
+    private static class PriorityOrder implements Comparator<Node> {
+        private int getPriority(Node b) {
+            return b.board.manhattan() + b.moves;
         }
 
         @Override
         public int compare(Node x, Node y) {
-            int diff = getCost(x) - getCost(y);
+            int diff = getPriority(x) - getPriority(y);
             if (diff < 0) return -1;
             if (diff > 0) return 1;
             return 0;
@@ -72,13 +75,13 @@ public class Solver {
         return goalBoard.moves;
     }
     // sequence of boards in a shortest solution; null if unsolvable
-    public Iterable<Node> solution() {
+    public Iterable<Board> solution() {
         return () -> {
             return new SolutionsIterator();
         };
     }
 
-    private class SolutionsIterator implements Iterator<Node> {
+    private class SolutionsIterator implements Iterator<Board> {
         Node current = goalBoard;
 
         @Override
@@ -87,10 +90,10 @@ public class Solver {
         }
 
         @Override
-        public Node next() {
+        public Board next() {
             if (hasNext()) {
                 current = current.prev;
-                return current;
+                return current.board;
             } else {
                 throw new NoSuchElementException("There is no next neighbor.");
             }
@@ -121,8 +124,8 @@ public class Solver {
             StdOut.println("No solution possible");
         else {
             StdOut.println("Minimum number of moves = " + solver.moves());
-            for (Node node : solver.solution())
-                StdOut.println(node.board);
+            for (Board board : solver.solution())
+                StdOut.println(board);
         }
     }
 }

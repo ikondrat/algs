@@ -10,6 +10,7 @@ public class Board {
     private int[] blocks;
     private final int n;
     private int[] goalBlocks;
+    private String stringKey;
     private Board[] neighbors;
     private int manhattanSum = -1;
 
@@ -184,7 +185,7 @@ public class Board {
             );
         }
         // right
-        if (i % n != 2) {
+        if ((i + 1) % n != 0) {
             int[] copy = Arrays.copyOf(blocks, blocks.length);
             exch(copy, i, i+1);
             foundNeighbors.add(
@@ -218,6 +219,7 @@ public class Board {
 
     // string representation of this board (in the output format specified below)
     public String toString() {
+        if (stringKey != null) return stringKey;
         String output = String.format("%d\n", n);
         for (int i = 0; i < blocks.length; i += n) {
             for (int j = 0; j < n; j++) {
@@ -228,6 +230,7 @@ public class Board {
             }
             output += "\n";
         }
+        stringKey = output;
         return output;
     }
 
