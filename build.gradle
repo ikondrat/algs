@@ -76,4 +76,11 @@ task createDistCollinear(type: Zip, dependsOn: checkstyleMain){
   from (file('./src/main/java/FastCollinearPoints.java'))
 }
 
+task createDistPuzzle(type: Zip, dependsOn: checkstyleMain){
+  archiveName=" 8puzzle.zip"
+  destinationDir = file('build/distributions/')
+  from (file('./src/main/java/Board.java'))
+  from (file('./src/main/java/Solver.java'))
+}
+
 run.dependsOn checkstyleMain

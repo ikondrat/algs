@@ -16,11 +16,22 @@ public class Board {
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
         n = arr.length;
-        blocks = getPlain(arr);
-        int[] sortedBlocks = Arrays.copyOf(blocks, blocks.length);
-        Arrays.sort(sortedBlocks);
+        blocks = new int[n*n];
         goalBlocks = new int[n*n];
-        System.arraycopy(sortedBlocks, 1, goalBlocks, 0, n*n-1);
+
+        int spaceIndex = -1;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                int v = arr[i][j];
+                blocks[getIndexByMatrixCoords(i, j)] = v;
+                if (v == 0) {
+                    spaceIndex = getIndexByMatrixCoords(i, j);
+                }
+                goalBlocks[getIndexByMatrixCoords(i, j)] = v;
+            }
+        }
+        exch(goalBlocks, spaceIndex, goalBlocks.length - 1);
+        Arrays.sort(goalBlocks, 0, goalBlocks.length - 1);
         manhattanSum = this.manhattan();
     }
 
@@ -35,6 +46,12 @@ public class Board {
     }
 
     private void exch(int[] arr, int x, int y) {
+        if (x > arr.length - 1) {
+            throw new NoSuchElementException("x out of range");
+        }
+        if (y > arr.length - 1) {
+            throw new NoSuchElementException("y out of range");
+        }
         int v = arr[x];
         arr[x] = arr[y];
         arr[y] = v;
@@ -88,6 +105,7 @@ public class Board {
             }
             if (blocks[index] == goalBlocks[i]) {
                 targetIndex = i;
+                break;
             }
         }
         int[] p = getMatrixCoordsByIndex(targetIndex);
@@ -186,8 +204,7 @@ public class Board {
             );
         }
         // bottom
-        int x = blocks.length - n - 1;
-        if (i/x < 1) {
+        if (blocks.length - i > n) {
             int[] copy = Arrays.copyOf(blocks, blocks.length);
             exch(copy, i, i+n);
             foundNeighbors.add(
@@ -202,7 +219,7 @@ public class Board {
     // string representation of this board (in the output format specified below)
     public String toString() {
         String output = String.format("%d\n", n);
-        for (int i = 0; i < blocks.length; i += 2) {
+        for (int i = 0; i < blocks.length; i += n) {
             for (int j = 0; j < n; j++) {
                 if (j > 0) {
                     output += " ";
