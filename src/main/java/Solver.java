@@ -14,6 +14,7 @@ public class Solver {
     private final ArrayList<Board> boards;
     private final ArrayList<Integer> boardMoves;
     private final ArrayList<Integer> boardPrevs;
+    private Board[] solutionBoards;
 
     public Solver(Board initial) {
         if (isNull(initial)) {
@@ -105,36 +106,47 @@ public class Solver {
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
         return () -> {
+            if (solutionBoards == null) {
+                findSolutionBoards();
+            }
             return new SolutionsIterator();
         };
     }
 
-    private class SolutionsIterator implements Iterator<Board> {
+    private void findSolutionBoards() {
         Board current = goalBoard;
+        int i = boardKeys.indexOf(current.toString());
+        int n = boardMoves.get(i) + 1;
+        solutionBoards = new Board[n];
+        while (n > 0) {
+            solutionBoards[--n] = current;
+            String k = current.toString();
+            i = boardKeys.indexOf(k);
+            int index = boardPrevs.get(i);
+            current = index != -1 ? boards.get(index) : null;
+        }
+    }
+
+    private class SolutionsIterator implements Iterator<Board> {
+        private int index = 0;
 
         @Override
         public boolean hasNext() {
-            return current != null;
+            return index < solutionBoards.length;
         }
 
         @Override
         public Board next() {
             if (hasNext()) {
-                Board b = current;
-                String k = b.toString();
-                int index = boardPrevs.get(
-                    boardKeys.indexOf(k)
-                );
-                current = index != -1 ? boards.get(index) : null;
-                return b;
+                return solutionBoards[index++];
             } else {
-                throw new NoSuchElementException("There is no next neighbor.");
+                throw new NoSuchElementException("There is no next solution.");
             }
         }
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException("Removal of neighbors not supported.");
+            throw new UnsupportedOperationException("Removal of solutions is not supported.");
         }
     }
 
