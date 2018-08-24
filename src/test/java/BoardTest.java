@@ -120,9 +120,9 @@ public class BoardTest {
         };
         Board b = new Board(blocks);
         Board t = b.twin();
-        assertEquals(
-            b.equals(t),
-            false
+        assertNotEquals(
+            t.toString(),
+            b.toString()
         );
     }
 }

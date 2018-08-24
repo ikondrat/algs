@@ -67,7 +67,7 @@
             "stopOnEntry": false,
             "projectName": "princeton-algorithms",
             "mainClass": "Solver",
-            "args": "etc/8puzzle/puzzle27.txt"
+            "args": "etc/8puzzle/puzzle04.txt"
         },
         {
             "type": "java",

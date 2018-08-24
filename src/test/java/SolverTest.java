@@ -188,4 +188,38 @@ public class SolverTest {
     public void testNullException() {
         Solver s = new Solver(null);
     }
+
+    @Test
+    public void testMoves4() {
+        int[][] blocks = {
+            {0, 1, 3},
+            {4, 2, 5},
+            {7, 8, 6}
+        };
+        
+        Solver s = new Solver(new Board(blocks));
+        assertEquals(
+            4,
+            s.moves()
+        );
+    }
+
+    @Test
+    public void testSolutions5() {
+        int[][] blocks = {
+            {0, 1, 3},
+            {4, 2, 5},
+            {7, 8, 6}
+        };
+        
+        Solver s = new Solver(new Board(blocks));
+        int n = 0;
+        for(Board b: s.solution()) {
+            n++;
+        }
+        assertEquals(
+            5,
+            n
+        );
+    }
 }

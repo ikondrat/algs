@@ -1,60 +1,63 @@
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Iterator;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdRandom;
 
 public class Board {
-    private final int[] blocks;
+    private final int[][] blocks;
     private final int n;
-    private final int[] goalBlocks;
+    private final int[][] sortedBlocks;
+    private final ArrayList<Integer> blocksToMove;
     private String stringKey;
     private Board[] neighbors;
     private int manhattanSum;
-    private boolean mhCounted;
-    private int hammingDistance = -1;
+    private int zeroIndex;
 
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
         n = arr.length;
-        blocks = new int[n*n];
-        goalBlocks = new int[n*n];
-        int spaceIndex = -1;
+        blocks = arr;
+        manhattanSum = -1;
+        blocksToMove = new ArrayList<>();
+        sortedBlocks = getSortedMatrix(blocks);
+    }
+
+    private int[][] getSortedMatrix(int[][] sourceMatrix) { 
+        int[] temp = new int[n*n];
+        int k = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                int v = arr[i][j];
-                blocks[getIndexByMatrixCoords(i, j)] = v;
+                int v = sourceMatrix[i][j];
                 if (v == 0) {
-                    spaceIndex = getIndexByMatrixCoords(i, j);
+                    zeroIndex = getIndexByMatrixCoords(i, j);
+                    continue;
                 }
-                goalBlocks[getIndexByMatrixCoords(i, j)] = v;
+                temp[k++] = v;
             }
         }
-        exch(goalBlocks, spaceIndex, goalBlocks.length - 1);
-        Arrays.sort(goalBlocks, 0, goalBlocks.length - 1);
-    }
-
-    private void exch(int[] arr, int x, int y) {
-        if (x > arr.length - 1) {
-            throw new NoSuchElementException("x out of range");
+        Arrays.sort(temp);
+        k = 1;
+        // copy the elements of temp[]
+        // one by one in mat[][]
+        int[][] res = new int[n][n];
+        for (int x = 0; x < n; x++) {
+            for (int y = 0; y < n; y++) {
+                if (k < n*n) {
+                    int v = temp[k++];
+                    res[x][y] = v;
+                    if (v != sourceMatrix[x][y]) {
+                        int indx = getIndexByMatrixCoords(x, y);
+                        blocksToMove.add(
+                            indx
+                        );
+                    }
+                }
+                
+            }
         }
-        if (y > arr.length - 1) {
-            throw new NoSuchElementException("y out of range");
-        }
-        int v = arr[x];
-        arr[x] = arr[y];
-        arr[y] = v;
-    }
-
-    private int[][] getMatrix(int[] arr) {
-        int[][] mtr = new int[n][n];
-        for (int i = 0; i < arr.length; i++) {
-            int[] c = getMatrixCoordsByIndex(i);
-            mtr[c[0]][c[1]] = arr[i];
-        }
-        return mtr;
+        return res;
     }
 
     private int getIndexByMatrixCoords(int x, int y) {
@@ -75,56 +78,46 @@ public class Board {
 
     // number of blocks out of place
     public int hamming() {
-        if (hammingDistance != -1) return hammingDistance;
-        hammingDistance = 0;
-        for (int i = 0; i < blocks.length - 1; i++) {
-            if (goalBlocks[i] != blocks[i]) hammingDistance++;
-        }
-        return hammingDistance;
+        return blocksToMove.size();
     }
 
     private int getMhDistance(int[] c1, int[] c2) {
         return Math.abs(c1[0] - c2[0]) + Math.abs(c2[1] - c1[1]);
     }
 
-    private int getTargetIndex(int index) {
-        int targetIndex = -1;
+    private int[] getTarget(int index) {
+        int[] target = new int[2];
+        int[] tc = getMatrixCoordsByIndex(index);
         
-        for (int i = 0; i < blocks.length; i++) {
-            if (blocks[index] == 0) {
-                targetIndex = blocks.length - 1;
-                break;
-            } else if (blocks[index] == goalBlocks[i]) {
-                targetIndex = i;
-                break;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (blocks[i][j] == sortedBlocks[tc[0]][tc[1]]) {
+                    target[0] = i;
+                    target[1] = j;
+                }
             }
         }
-        return targetIndex;
+        return target;
     }
 
     private int getManhattanDistanceForBlock(int index) {
-        int targetIndex = getTargetIndex(index);
-        int[] p = getMatrixCoordsByIndex(targetIndex);
-        int[] p2 = getMatrixCoordsByIndex(index);
+        int[] target = getTarget(index);
+        int[] source = getMatrixCoordsByIndex(index);
         int mh = getMhDistance(
-            p,
-            p2
+            target,
+            source
         );
         return mh;
     }
 
     // sum of Manhattan distances between blocks and goal
     public int manhattan() {
-        if (mhCounted) return manhattanSum;
-        int sum = 0;
-        for (int i = 0; i < blocks.length; i++) {
-            if (blocks[i] != 0 && blocks[i] != goalBlocks[i]) {
-                sum += getManhattanDistanceForBlock(i);
-            }
+        if (manhattanSum != -1) return manhattanSum;
+        manhattanSum = 0;
+        for (int b: blocksToMove) {
+            manhattanSum += getManhattanDistanceForBlock(b);
         }
-        mhCounted = true;
-        manhattanSum = sum;
-        return sum;
+        return manhattanSum;
     }
 
     // is this board the goal board?
@@ -132,20 +125,34 @@ public class Board {
         return hamming() == 0;
     }
 
+    private int[][] copy(int[][] arr) {
+        int[][] copy = new int[arr.length][arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            System.arraycopy(blocks[i], 0, copy[i], 0, blocks[i].length);
+        }
+        return copy;
+    }
+
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        int rIndex = StdRandom.uniform(0, n*n);
-        int rIndex2 = StdRandom.uniform(0, n*n);
-        while (blocks[rIndex] == 0) {
-            rIndex2 = StdRandom.uniform(0, n*n);
+        int r1 = -1;
+        int r2 = -1;
+        for (int i = 0; i < n*n; i++) {
+            if (i != zeroIndex && r1 == -1) {
+                r1 = i;
+                continue;
+            }
+            if (i != zeroIndex && r2 == -1) {
+                r2 = i;
+                break;
+            }
         }
-        while (rIndex == rIndex2 || blocks[rIndex2] == 0) {
-            rIndex2 = StdRandom.uniform(0, n*n);
-        }
-        int[] copy = Arrays.copyOf(blocks, blocks.length);
-        exch(copy, rIndex, rIndex2);
+        int[] b1 = getMatrixCoordsByIndex(r1);
+        int[] b2 = getMatrixCoordsByIndex(r2);
+        int[][] copy = copy(blocks);
+        exch(copy, b1[0], b1[1], b2[0], b2[1]);
         return new Board(
-            getMatrix(copy)
+            copy
         );
     }
 
@@ -165,51 +172,54 @@ public class Board {
         };
     }
 
+    private void exch(int[][] arr, int x1, int y1, int x2, int y2) {
+        int v = arr[x1][y1];
+        arr[x1][y1] = arr[x2][y2];
+        arr[x2][y2] = v;
+    }
+
     private void findNeighbors() {
         ArrayList<Board> foundNeighbors = new ArrayList<>();
-        int i = 0;
-
-        while (blocks[i] != 0) {
-            i++;
-        }
-
+        int[] zcoords = getMatrixCoordsByIndex(zeroIndex);
+        int x = zcoords[0];
+        int y = zcoords[1];
         // left
-        if (i % n != 0) {
-            int[] copy = Arrays.copyOf(blocks, blocks.length);
-            exch(copy, i, i-1);
+        if (zcoords[1] > 0) {
+            int[][] copy = copy(blocks);
+            exch(copy, x, y, x, y - 1);
             foundNeighbors.add(
                 new Board(
-                    getMatrix(copy)
+                    copy
                 )
             );
         }
         // right
-        if ((i + 1) % n != 0) {
-            int[] copy = Arrays.copyOf(blocks, blocks.length);
-            exch(copy, i, i+1);
+        if (zcoords[1] < n - 1) {
+            int[][] copy = copy(blocks);
+            exch(copy, x, y, x, y + 1);
             foundNeighbors.add(
                 new Board(
-                    getMatrix(copy)
+                    copy
                 )
             );
         }
         // top
-        if ((i + 1) > n) {
-            int[] copy = Arrays.copyOf(blocks, blocks.length);
-            exch(copy, i, i-n);
+        if (x > 0) {
+            int[][] copy = copy(blocks);
+            exch(copy, x, y, x - 1, y);
             foundNeighbors.add(
                 new Board(
-                    getMatrix(copy)
+                    copy
                 )
             );
         }
         // bottom
-        if (blocks.length - i > n) {
-            int[] copy = Arrays.copyOf(blocks, blocks.length);
-            exch(copy, i, i+n);
+        if (x < n - 1) {
+            int[][] copy = copy(blocks);
+            exch(copy, x, y, x + 1, y);
             foundNeighbors.add(
                 new Board(
-                    getMatrix(copy)
+                    copy
                 )
             );
         }
@@ -221,12 +231,12 @@ public class Board {
         if (stringKey != null) return stringKey;
         StringBuilder output = new StringBuilder();
         output.append(String.format("%d\n", n));
-        for (int i = 0; i < blocks.length; i += n) {
+        for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (j > 0) {
                     output.append(" ");
                 }
-                output.append(String.format("%d", blocks[i + j]));
+                output.append(String.format("%d", blocks[i][j]));
             }
             output.append("\n");
         }

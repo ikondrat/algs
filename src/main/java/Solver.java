@@ -92,14 +92,15 @@ public class Solver {
 
         @Override
         public boolean hasNext() {
-            return current.prev != null;
+            return current != null;
         }
 
         @Override
         public Board next() {
             if (hasNext()) {
+                Board b = current.board;
                 current = current.prev;
-                return current.board;
+                return b;
             } else {
                 throw new NoSuchElementException("There is no next neighbor.");
             }
