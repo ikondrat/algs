@@ -111,4 +111,18 @@ public class BoardTest {
             4
         );
     }
+
+    @Test
+    public void TestTwin() {
+        int[][] blocks = {
+            {1, 0},
+            {2, 3}
+        };
+        Board b = new Board(blocks);
+        Board t = b.twin();
+        assertEquals(
+            b.equals(t),
+            false
+        );
+    }
 }

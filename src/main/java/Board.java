@@ -136,7 +136,10 @@ public class Board {
     public Board twin() {
         int rIndex = StdRandom.uniform(0, n*n);
         int rIndex2 = StdRandom.uniform(0, n*n);
-        while (rIndex == rIndex2) {
+        while (blocks[rIndex] == 0) {
+            rIndex2 = StdRandom.uniform(0, n*n);
+        }
+        while (rIndex == rIndex2 || blocks[rIndex2] == 0) {
             rIndex2 = StdRandom.uniform(0, n*n);
         }
         int[] copy = Arrays.copyOf(blocks, blocks.length);
