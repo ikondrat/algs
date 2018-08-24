@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 import java.util.Comparator;
 
 public class Solver {
-    private boolean isSolved = false;
+    private final boolean isSolved;
     private Node goalBoard;
 
     private class Node {
@@ -24,7 +24,7 @@ public class Solver {
 
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
-        if (initial == null) {
+        if (isNull(initial)) {
             throw new java.lang.IllegalArgumentException(
                 "The board is expected to be passed into the constructor"
             );
@@ -32,11 +32,12 @@ public class Solver {
         ArrayList<String> visitedBoards = new ArrayList<>();
         MinPQ<Node> bs = new MinPQ<>(new PriorityOrder());
         bs.insert(new Node(initial, 0));
+        boolean solved = false;
         while (!bs.isEmpty()) {
             Node current = bs.delMin();
             
             if (current.board.isGoal()) {
-                isSolved = true;
+                solved = true;
                 goalBoard = current;
                 break;
             }
@@ -49,11 +50,16 @@ public class Solver {
             }
             visitedBoards.add(current.board.toString());
         }
+        isSolved = solved;
+    }
+
+    private boolean isNull(Object x) {
+        return x == null;
     }
 
     private static class PriorityOrder implements Comparator<Node> {
         private int getPriority(Node b) {
-            return b.board.manhattan() + b.moves;
+            return b.board.hamming() + b.moves;
         }
 
         @Override

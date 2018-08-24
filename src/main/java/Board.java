@@ -7,19 +7,20 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
 public class Board {
-    private int[] blocks;
+    private final int[] blocks;
     private final int n;
-    private int[] goalBlocks;
+    private final int[] goalBlocks;
     private String stringKey;
     private Board[] neighbors;
-    private int manhattanSum = -1;
+    private final int manhattanSum;
+    private boolean mhCounted;
+    private int hammingDistance = -1;
 
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
         n = arr.length;
         blocks = new int[n*n];
         goalBlocks = new int[n*n];
-
         int spaceIndex = -1;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -33,17 +34,7 @@ public class Board {
         }
         exch(goalBlocks, spaceIndex, goalBlocks.length - 1);
         Arrays.sort(goalBlocks, 0, goalBlocks.length - 1);
-        manhattanSum = this.manhattan();
-    }
-
-    private int[] getPlain(int[][] arr) {
-        int[] plainArr = new int[n*n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                plainArr[getIndexByMatrixCoords(i, j)] = arr[i][j];
-            }
-        }
-        return plainArr;
+        // manhattanSum = this.manhattan();
     }
 
     private void exch(int[] arr, int x, int y) {
@@ -85,7 +76,8 @@ public class Board {
 
     // number of blocks out of place
     public int hamming() {
-        int hammingDistance = 0;
+        if (hammingDistance != -1) return hammingDistance;
+        hammingDistance = 0;
         for (int i = 0; i < blocks.length - 1; i++) {
             if (goalBlocks[i] != blocks[i]) hammingDistance++;
         }
@@ -96,19 +88,23 @@ public class Board {
         return Math.abs(c1[0] - c2[0]) + Math.abs(c2[1] - c1[1]);
     }
 
-    private int getManhattanDistanceForBlock(int index) {
+    private int getTargetIndex(int index) {
         int targetIndex = -1;
         
         for (int i = 0; i < blocks.length; i++) {
             if (blocks[index] == 0) {
-                targetIndex = 0;
+                targetIndex = blocks.length - 1;
                 break;
-            }
-            if (blocks[index] == goalBlocks[i]) {
+            } else if (blocks[index] == goalBlocks[i]) {
                 targetIndex = i;
                 break;
             }
         }
+        return targetIndex;
+    }
+
+    private int getManhattanDistanceForBlock(int index) {
+        int targetIndex = getTargetIndex(index);
         int[] p = getMatrixCoordsByIndex(targetIndex);
         int[] p2 = getMatrixCoordsByIndex(index);
         int mh = getMhDistance(
@@ -120,11 +116,14 @@ public class Board {
 
     // sum of Manhattan distances between blocks and goal
     public int manhattan() {
-        if (manhattanSum != -1) return manhattanSum;
+        if (mhCounted) return manhattanSum;
         int sum = 0;
-        for (int i = 0; i < blocks.length - 1; i++) {
-            sum += getManhattanDistanceForBlock(i);
+        for (int i = 0; i < blocks.length; i++) {
+            if (blocks[i] != 0 && blocks[i] != goalBlocks[i]) {
+                sum += getManhattanDistanceForBlock(i);
+            }
         }
+        mhCounted = true;
         return sum;
     }
 
@@ -149,11 +148,7 @@ public class Board {
 
     @Override
     public boolean equals(Object y) {
-        Board b = (Board) y;
-        for (int i = 0; i < blocks.length; i++) {
-            if (b.blocks[i] != blocks[i]) return false;
-        }
-        return true;
+        return (y.toString()).equals(this.toString());
     }
 
     // all neighboring boards
@@ -220,18 +215,19 @@ public class Board {
     // string representation of this board (in the output format specified below)
     public String toString() {
         if (stringKey != null) return stringKey;
-        String output = String.format("%d\n", n);
+        StringBuilder output = new StringBuilder();
+        output.append(String.format("%d\n", n));
         for (int i = 0; i < blocks.length; i += n) {
             for (int j = 0; j < n; j++) {
                 if (j > 0) {
-                    output += " ";
+                    output.append(" ");
                 }
-                output += String.format("%d", blocks[i + j]);
+                output.append(String.format("%d", blocks[i + j]));
             }
-            output += "\n";
+            output.append("\n");
         }
-        stringKey = output;
-        return output;
+        stringKey = output.toString();
+        return stringKey;
     }
 
     private class NeighborIterator implements Iterator<Board> {

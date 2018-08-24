@@ -59,6 +59,7 @@ spotbugs {
     showProgress = true
     reportLevel = "high"
     includeFilter = file("$rootDir/config/spotbugs/spotbugs.xml")
+    // html.enabled = true
 }
 
 run {
