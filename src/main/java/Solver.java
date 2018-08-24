@@ -59,7 +59,7 @@ public class Solver {
 
     private static class PriorityOrder implements Comparator<Node> {
         private int getPriority(Node b) {
-            return b.board.hamming() + b.moves;
+            return b.board.manhattan() + b.moves;
         }
 
         @Override
