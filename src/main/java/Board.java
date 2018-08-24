@@ -148,6 +148,7 @@ public class Board {
 
     @Override
     public boolean equals(Object y) {
+        if (y == null) return false;
         return (y.toString()).equals(this.toString());
     }
 
