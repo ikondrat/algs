@@ -12,7 +12,7 @@ public class Board {
     private final int[] goalBlocks;
     private String stringKey;
     private Board[] neighbors;
-    private final int manhattanSum;
+    private int manhattanSum;
     private boolean mhCounted;
     private int hammingDistance = -1;
 
@@ -34,7 +34,6 @@ public class Board {
         }
         exch(goalBlocks, spaceIndex, goalBlocks.length - 1);
         Arrays.sort(goalBlocks, 0, goalBlocks.length - 1);
-        // manhattanSum = this.manhattan();
     }
 
     private void exch(int[] arr, int x, int y) {
@@ -124,6 +123,7 @@ public class Board {
             }
         }
         mhCounted = true;
+        manhattanSum = sum;
         return sum;
     }
 
