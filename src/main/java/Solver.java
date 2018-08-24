@@ -9,20 +9,12 @@ import java.util.Comparator;
 
 public class Solver {
     private final boolean isSolved;
-    private Node goalBoard;
+    private Board goalBoard;
+    private final ArrayList<String> boardKeys;
+    private final ArrayList<Board> boards;
+    private final ArrayList<Integer> boardMoves;
+    private final ArrayList<Integer> boardPrevs;
 
-    private class Node {
-        public Board board;
-        public int moves;
-        public Node prev;
-
-        Node(Board board, int moves) {
-            this.board = board;
-            this.moves = moves;
-        }
-    }
-
-    // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         if (isNull(initial)) {
             throw new java.lang.IllegalArgumentException(
@@ -30,25 +22,44 @@ public class Solver {
             );
         }
         ArrayList<String> visitedBoards = new ArrayList<>();
-        MinPQ<Node> bs = new MinPQ<>(new PriorityOrder());
-        bs.insert(new Node(initial, 0));
+        boards = new ArrayList<>();
+        boardKeys = new ArrayList<>();
+        boardMoves = new ArrayList<>();
+        boardPrevs = new ArrayList<>();
+
+        MinPQ<Board> bs = new MinPQ<>(new PriorityOrder(boardKeys, boardMoves));
+        bs.insert(initial);
+        String initialKey = initial.toString();
+
+        boards.add(initial);
+        boardKeys.add(initialKey);
+        boardMoves.add(0);
+        boardPrevs.add(-1);
+
         boolean solved = false;
         while (!bs.isEmpty()) {
-            Node current = bs.delMin();
+            Board current = bs.delMin();
             
-            if (current.board.isGoal()) {
+            String currentKey = current.toString();
+            if (visitedBoards.contains(currentKey)) continue;
+            int indexCurrent = boardKeys.indexOf(currentKey);
+            if (current.isGoal()) {
                 solved = true;
                 goalBoard = current;
                 break;
             }
-            if (visitedBoards.contains(current.board.toString())) continue;
-            for (Board next: current.board.neighbors()) {
-                if (visitedBoards.contains(next.toString())) continue;
-                Node n = new Node(next, current.moves + 1);
-                n.prev = current;
-                bs.insert(n);
+
+            for (Board next: current.neighbors()) {
+                String nextKey = next.toString();
+                if (visitedBoards.contains(nextKey)) continue;
+                boardKeys.add(nextKey);
+                int moves = boardMoves.get(indexCurrent) + 1;
+                boardMoves.add(moves);
+                boards.add(next);
+                boardPrevs.add(indexCurrent);
+                bs.insert(next);
             }
-            visitedBoards.add(current.board.toString());
+            visitedBoards.add(currentKey);
         }
         isSolved = solved;
     }
@@ -57,13 +68,22 @@ public class Solver {
         return x == null;
     }
 
-    private static class PriorityOrder implements Comparator<Node> {
-        private int getPriority(Node b) {
-            return b.board.manhattan() + b.moves;
+    private static class PriorityOrder implements Comparator<Board> {
+        ArrayList<String> boards;
+        ArrayList<Integer> moves;
+
+        PriorityOrder(ArrayList<String> b, ArrayList<Integer> m) {
+            this.boards = b;
+            this.moves = m;
+        }
+        private int getPriority(Board b) {
+            String boardKey = b.toString();
+            int i = boards.indexOf(boardKey);
+            return b.manhattan() + moves.get(i);
         }
 
         @Override
-        public int compare(Node x, Node y) {
+        public int compare(Board x, Board y) {
             int diff = getPriority(x) - getPriority(y);
             if (diff < 0) return -1;
             if (diff > 0) return 1;
@@ -78,7 +98,9 @@ public class Solver {
 
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
-        return goalBoard.moves;
+        String k = goalBoard.toString();
+        int i = boardKeys.indexOf(k);
+        return boardMoves.get(i);
     }
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
@@ -88,7 +110,7 @@ public class Solver {
     }
 
     private class SolutionsIterator implements Iterator<Board> {
-        Node current = goalBoard;
+        Board current = goalBoard;
 
         @Override
         public boolean hasNext() {
@@ -98,8 +120,12 @@ public class Solver {
         @Override
         public Board next() {
             if (hasNext()) {
-                Board b = current.board;
-                current = current.prev;
+                Board b = current;
+                String k = b.toString();
+                int index = boardPrevs.get(
+                    boardKeys.indexOf(k)
+                );
+                current = index != -1 ? boards.get(index) : null;
                 return b;
             } else {
                 throw new NoSuchElementException("There is no next neighbor.");

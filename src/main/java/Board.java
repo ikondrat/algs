@@ -173,9 +173,9 @@ public class Board {
     }
 
     private void exch(int[][] arr, int x1, int y1, int x2, int y2) {
-        int v = arr[x1][y1];
-        arr[x1][y1] = arr[x2][y2];
-        arr[x2][y2] = v;
+        arr[x1][y1] = arr[x1][y1] ^ arr[x2][y2];
+        arr[x2][y2] = arr[x1][y1] ^ arr[x2][y2];
+        arr[x1][y1] = arr[x1][y1] ^ arr[x2][y2];
     }
 
     private void findNeighbors() {
