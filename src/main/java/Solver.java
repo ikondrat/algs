@@ -1,85 +1,165 @@
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Comparator;
 
 public class Solver {
     private final boolean isSolved;
-    private Board goalBoard;
-    private final ArrayList<Board> boards;
-    private final ArrayList<Board> boardPrevs;
+    private Node goalBoard;
+
     private Board[] solutionBoards;
 
-    public Solver(Board initial) {
-        if (isNull(initial)) {
+    public Solver(Board b) {
+        if (isNull(b)) {
             throw new java.lang.IllegalArgumentException(
                 "The board is expected to be passed into the constructor"
             );
         }
-        boards = new ArrayList<>();
-        boardPrevs = new ArrayList<>();
+        MinPQ<Node> bs = new MinPQ<>();
+        MinPQ<Node> bsTwin = new MinPQ<>();
+        Board twinB = b.twin();
+        Node initialNode = new Node(
+            b,
+            b.manhattan(),
+            0,
+            null
+        );
+        Node initialNodeTwin = new Node(
+            twinB,
+            twinB.manhattan(),
+            0,
+            null
+        );
 
-        MinPQ<Board> bs = new MinPQ<>(new PriorityOrder(boards, boardPrevs));
-        bs.insert(initial);
-        boards.add(initial);
-        boardPrevs.add(null);
-        boolean solved = false;
-        while (!bs.isEmpty()) {
-            Board current = bs.delMin();
-            
-            if (current.isGoal()) {
-                solved = true;
-                goalBoard = current;
+        bs.insert(initialNode);
+        bsTwin.insert(initialNodeTwin);
+
+        boolean hasSolution = false;
+        boolean hasNoSolution = false;
+        ArrayList<String> costsSoFarKeys = new ArrayList<>();
+        ArrayList<Integer> costsSoFar = new ArrayList<>();
+        ArrayList<String> costsSoFarKeysT = new ArrayList<>();
+        ArrayList<Integer> costsSoFarT = new ArrayList<>();
+        setPrioritySoFar(b, costsSoFarKeys, costsSoFar, 0);
+        setPrioritySoFar(twinB, costsSoFarKeysT, costsSoFarT, 0);
+
+        while (!bs.isEmpty() || !hasNoSolution) {
+            Node current = bs.delMin();
+            Node currentTwin = bsTwin.delMin();
+            Node currentBoardNode = getGoal(
+                current,
+                bs,
+                costsSoFarKeys,
+                costsSoFar
+            );
+            Node currentBoardTwinNode = getGoal(
+                currentTwin,
+                bsTwin,
+                costsSoFarKeysT,
+                costsSoFarT
+            );
+            if (currentBoardNode.board.isGoal()) {
+                goalBoard = currentBoardNode;
+                hasSolution = true;
                 break;
             }
-            for (Board next: current.neighbors()) {
-                if (boards.contains(next)) continue;
-                boards.add(next);
-                boardPrevs.add(current);
-                bs.insert(next);
+
+            if (currentBoardTwinNode.board.isGoal()) {
+                hasNoSolution = true;
             }
         }
-        isSolved = solved;
+        isSolved = hasSolution;
     }
 
-    private boolean isNull(Object x) {
-        return x == null;
-    }
-
-    private static class PriorityOrder implements Comparator<Board> {
-        ArrayList<Board> boards;
-        ArrayList<Board> prevBoards;
-
-        PriorityOrder(ArrayList<Board> b, ArrayList<Board> p) {
-            this.boards = b;
-            this.prevBoards = p;
+    private int getPrioritySoFar(Board b, ArrayList<String> costsSoFarKeys, ArrayList<Integer> costsSoFar) {
+        String key = b.toString();
+        if (costsSoFarKeys.contains(key)) {
+            int i = costsSoFarKeys.indexOf(key);
+            return costsSoFar.get(i);
         }
+        return -1;
+    }
 
-        private int getDistanceToGoal(Board b) {
-            int count = 0;
-            while (b != null && !b.isGoal()) {
-                int i = boards.indexOf(b);
-                b = i != -1 ? prevBoards.get(i) : null;
-                count++;
+    private void setPrioritySoFar(Board b, ArrayList<String> costsSoFarKeys, ArrayList<Integer> costsSoFar, int v) {
+        String key = b.toString();
+        if (costsSoFarKeys.contains(key)) {
+            int i = costsSoFarKeys.indexOf(key);
+            costsSoFar.set(i, v);
+        } else {
+            costsSoFarKeys.add(key);
+            costsSoFar.add(v);
+        }
+    }
+
+    private Node getGoal(Node current, MinPQ<Node> nodes, ArrayList<String> costsSoFarKeys, ArrayList<Integer> costsSoFar) {
+        if (current.board.isGoal()) {
+            return current;
+        }
+        for (Board next: current.board.neighbors()) {
+            int moves = current.moves + 1;
+            int priority = next.manhattan();
+            
+            int prio = getPrioritySoFar(next, costsSoFarKeys, costsSoFar);
+            if (prio == -1 || prio < priority) {
+                Node n = new Node(
+                    next,
+                    priority + moves,
+                    moves,
+                    current
+                );
+                nodes.insert(n);
+                setPrioritySoFar(next, costsSoFarKeys, costsSoFar, priority);
             }
-            return count;
+        }
+        return current;
+    }
+
+    private class Node implements Comparable<Node> {
+        private final Board board;
+        private final int priority;
+        public final int moves;
+        private final Node prev;
+
+        public Node(Board board, int priority, int moves, Node prev) {
+            this.board = board;
+            this.priority = priority;
+            this.moves = moves;
+            this.prev = prev;
         }
 
-        private int getPriority(Board b) {
-            return b.manhattan() + getDistanceToGoal(b);
+        public Stack<Board> getSolutionForBoard() {
+            Stack<Board> solutionBoards = new Stack<>();
+            Node current = this;
+            while (current != null) {
+                solutionBoards.push(current.board);
+                current = current.prev;
+            }
+            return solutionBoards;
         }
 
-        @Override
-        public int compare(Board x, Board y) {
-            int diff = getPriority(x) - getPriority(y);
+        public boolean equals(Node that) {
+            return this.board.equals(that.board);
+        }
+        public boolean equals(Board that) {
+            return this.board.equals(that);
+        }
+
+        public int compareTo(Node that) {
+            int diff = this.priority - that.priority;
             if (diff < 0) return -1;
             if (diff > 0) return 1;
             return 0;
         }
+    }
+
+    
+
+    private boolean isNull(Object x) {
+        return x == null;
     }
 
     // is the initial board solvable?
@@ -87,26 +167,9 @@ public class Solver {
         return isSolved;
     }
 
-    private int getDistanceToGoal(Board b) {
-        return getWayBoards(b).length;
-    }
-
-    private Board[] getWayBoards(Board b) {
-        ArrayList<Board> wb = new ArrayList<>();
-        while (b != null) {
-            wb.add(b);
-            int i = boards.indexOf(b);
-            b = i != -1 ? boardPrevs.get(i) : null;
-        }
-        Board[] wbArr = new Board[wb.size()];
-        wb.toArray(wbArr);
-        
-        return wbArr;
-    }
-
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
-        return getDistanceToGoal(goalBoard) - 1;
+        return goalBoard.moves;
     }
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
@@ -119,12 +182,11 @@ public class Solver {
     }
 
     private void findSolutionBoards() {
-        Board current = goalBoard;
-        Board[] bbb = getWayBoards(goalBoard);
-        int n = bbb.length;
-        solutionBoards = new Board[n];
-        while (n > 0) {
-            solutionBoards[--n] = bbb[solutionBoards.length - n - 1];
+        Stack<Board> solutionItems = goalBoard.getSolutionForBoard();
+        int i = 0;
+        solutionBoards = new Board[solutionItems.size()];
+        for (Board board: solutionItems) {
+            solutionBoards[i++] = board;
         }
     }
 
