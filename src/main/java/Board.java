@@ -44,7 +44,7 @@ public class Board {
         }
     }
 
-    public int biSearch(int[] arr, int from, int to, int targetValue) {
+    private int biSearch(int[] arr, int from, int to, int targetValue) {
         int mid;
         do {
             mid = (from + to) >>> 1;
