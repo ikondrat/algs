@@ -40,9 +40,8 @@ public class Solver {
         boolean solved = false;
         while (!bs.isEmpty()) {
             Board current = bs.delMin();
-            
             String currentKey = current.toString();
-            //if (visitedBoards.contains(currentKey)) continue;
+            if (visitedBoards.contains(currentKey)) continue;
             int indexCurrent = boardKeys.indexOf(currentKey);
             if (current.isGoal()) {
                 solved = true;

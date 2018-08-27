@@ -44,14 +44,14 @@ public class Board {
         }
     }
 
-    public int biSearch(int[] arr, int l, int r, int val) {
-        int x = arr.length - 2;
-        if (val == 0) return arr.length - 1;
-        while (x > 0 && x < r && arr[x] != val) {
-            int half = x/2;
-            x = val > arr[x] ? x + half: x - half - 1;
-        }
-        return arr[x] == val ? x : -1;
+    public int biSearch(int[] arr, int from, int to, int targetValue) {
+        int mid;
+        do {
+            mid = (from + to) >>> 1;
+            if (arr[mid] < targetValue) from = mid + 1;
+            if (arr[mid] > targetValue) to = mid - 1;
+        } while (from <= to && arr[mid] != targetValue);
+        return arr[mid] == targetValue ? mid : -1;
     }
 
     private int getIndexByMatrixCoords(int x, int y) {

@@ -76,12 +76,33 @@ public class BoardTest {
 
         int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 0};
         assertEquals(
-            8,
+            -1,
             b.biSearch(
                 arr,
                 0,
                 arr.length - 1,
                 0
+            )
+        );
+    }
+
+    @Test
+    public void biSearch_test12() {
+        int[][] blocks = {
+            {8, 1, 3},
+            {4, 0, 2},
+            {7, 6, 5},
+        };
+        Board b = new Board(blocks);
+
+        int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0};
+        assertEquals(
+            11,
+            b.biSearch(
+                arr,
+                0,
+                arr.length - 1,
+                12
             )
         );
     }
