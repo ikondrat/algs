@@ -3,6 +3,110 @@ import java.util.Iterator;
 import static org.junit.Assert.*;
 
 public class BoardTest {
+    @Test
+    public void biSearch_test3() {
+        int[][] blocks = {
+            {8, 1, 3},
+            {4, 0, 2},
+            {7, 6, 5},
+        };
+        Board b = new Board(blocks);
+
+        int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 0};
+        assertEquals(
+            2,
+            b.biSearch(
+                arr,
+                0,
+                arr.length - 1,
+                3
+            )
+        );
+    }
+
+    @Test
+    public void biSearch_test4() {
+        int[][] blocks = {
+            {8, 1, 3},
+            {4, 0, 2},
+            {7, 6, 5},
+        };
+        Board b = new Board(blocks);
+
+        int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 0};
+        assertEquals(
+            3,
+            b.biSearch(
+                arr,
+                0,
+                arr.length - 1,
+                4
+            )
+        );
+    }
+    @Test
+    public void biSearch_test8() {
+        int[][] blocks = {
+            {8, 1, 3},
+            {4, 0, 2},
+            {7, 6, 5},
+        };
+        Board b = new Board(blocks);
+
+        int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 0};
+        assertEquals(
+            7,
+            b.biSearch(
+                arr,
+                0,
+                arr.length - 1,
+                8
+            )
+        );
+    }
+
+    @Test
+    public void biSearch_test0() {
+        int[][] blocks = {
+            {8, 1, 3},
+            {4, 0, 2},
+            {7, 6, 5},
+        };
+        Board b = new Board(blocks);
+
+        int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 0};
+        assertEquals(
+            8,
+            b.biSearch(
+                arr,
+                0,
+                arr.length - 1,
+                0
+            )
+        );
+    }
+
+    @Test
+    public void biSearch_test1() {
+        int[][] blocks = {
+            {8, 1, 3},
+            {4, 0, 2},
+            {7, 6, 5},
+        };
+        Board b = new Board(blocks);
+
+        int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 0};
+        assertEquals(
+            0,
+            b.biSearch(
+                arr,
+                0,
+                arr.length - 1,
+                1
+            )
+        );
+    }
+
     @Test 
     public void TestHammingDistance() {
         int[][] blocks = {
@@ -17,6 +121,7 @@ public class BoardTest {
         );
     }
 
+   
     @Test
     public void TestManhattanDistance() {
         int[][] blocks = {
@@ -120,9 +225,6 @@ public class BoardTest {
         };
         Board b = new Board(blocks);
         Board t = b.twin();
-        assertNotEquals(
-            t.toString(),
-            b.toString()
-        );
+        assertFalse(b.equals(t));
     }
 }

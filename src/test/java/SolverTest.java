@@ -205,6 +205,21 @@ public class SolverTest {
     }
 
     @Test
+    public void testMoves11() {
+        int[][] blocks = {
+            {1, 6, 2},
+            {4, 8, 0},
+            {7, 3, 5}
+        };
+        
+        Solver s = new Solver(new Board(blocks));
+        assertEquals(
+            11,
+            s.moves()
+        );
+    }
+
+    @Test
     public void testSolutions5() {
         int[][] blocks = {
             {0, 1, 3},
