@@ -136,7 +136,9 @@ public class Board {
 
     @Override
     public boolean equals(Object y) {
+        if (y == null || y.getClass() != this.getClass()) return false;
         Board x = (Board) y;
+        if (x.n != n) return false;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (x.blocks[i][j] != blocks[i][j]) {
