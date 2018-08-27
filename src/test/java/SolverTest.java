@@ -12,8 +12,8 @@ public class SolverTest {
         Solver s = new Solver(b);
 
         assertEquals(
-            s.moves(),
-            1
+            1,
+            s.moves()
         );
     }
 
