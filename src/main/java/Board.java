@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.NoSuchElementException;
 import java.util.Iterator;
 import edu.princeton.cs.algs4.In;
@@ -136,9 +137,9 @@ public class Board {
 
     @Override
     public boolean equals(Object y) {
-        if (y == null || y.getClass() != this.getClass()) return false;
+        if (Objects.isNull(y) || !y.getClass().equals(this.getClass())) return false;
         Board x = (Board) y;
-        if (x.n != n) return false;
+        if (x.n != n || x.hammingCount != hammingCount || x.manhattanSum != manhattanSum) return false;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (x.blocks[i][j] != blocks[i][j]) {
