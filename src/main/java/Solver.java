@@ -53,13 +53,11 @@ public class Solver {
             isSolved = !root.isTwin;
         }
 
-        if (isSolved) {
-            solutionBoards = new Board[goalBoard.moves + 1];
-            int n = solutionBoards.length;
-            while (current != null) {
-                solutionBoards[--n] = current.board;
-                current = current.prev;
-            }
+        solutionBoards = new Board[goalBoard.moves + 1];
+        int n = solutionBoards.length;
+        while (current != null) {
+            solutionBoards[--n] = current.board;
+            current = current.prev;
         }
     }
 

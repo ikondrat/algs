@@ -267,4 +267,22 @@ public class SolverTest {
             s.isSolvable()
         );
     }
+
+    @Test
+    public void testUnsolvedBoardSolutions() {
+        int[][] blocks = {
+            {3, 2, 4, 8},
+            {1, 6, 0, 12},
+            {5, 10, 7, 11},
+            {9, 13, 14, 15}
+        };
+        Solver s = new Solver(new Board(blocks));
+        assertFalse(
+            s.isSolvable()
+        );
+        assertEquals(
+            s.moves(),
+            13
+        );
+    }
 }
