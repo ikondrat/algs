@@ -8,16 +8,16 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Board {
     private final int[][] blocks;
-    private final int n;
+    private final short n;
     private String stringKey;
     private Board[] neighbors;
-    private int manhattanSum;
-    private int hammingCount;
+    private short manhattanSum;
+    private short hammingCount;
     private int[] zeroCoords;
 
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
-        n = arr.length;
+        n = (short) arr.length;
         blocks = copy(arr);
         int[] plainArr = new int[n*n];
         int k = 0;
@@ -43,6 +43,7 @@ public class Board {
             }
             index++;
         }
+        plainArr = null;
     }
 
     private int biSearch(int[] arr, int from, int to, int targetValue) {

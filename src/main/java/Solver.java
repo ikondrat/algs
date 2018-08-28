@@ -128,23 +128,6 @@ public class Solver {
         return isSolved;
     }
 
-    // private int getDistanceToGoal(Board b) {
-    //     return getWayBoards(b).length;
-    // }
-
-    // private Board[] getWayBoards(Board b) {
-    //     ArrayList<Board> wb = new ArrayList<>();
-    //     while (b != null) {
-    //         wb.add(b);
-    //         int i = boards.indexOf(b);
-    //         b = i != -1 ? boardPrevs.get(i) : null;
-    //     }
-    //     Board[] wbArr = new Board[wb.size()];
-    //     wb.toArray(wbArr);
-        
-    //     return wbArr;
-    // }
-
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
         return goalBoard.moves;
