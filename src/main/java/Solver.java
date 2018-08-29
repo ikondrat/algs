@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 public class Solver {
     private boolean isSolved;
     private SolverNode goalBoard;
-    private Board[] solutionBoards;
+    private final Board[] solutionBoards;
 
     public Solver(Board initial) {
         if (isNull(initial)) {
@@ -48,7 +48,7 @@ public class Solver {
         }
 
         SolverNode root = current.root != null ? current.root : current;
-        if (current != null && current.isGoal) {
+        if (current.isGoal) {
             goalBoard = current;
             isSolved = !root.isTwin;
         }
@@ -138,7 +138,7 @@ public class Solver {
     }
 
     private static class SolutionsIterator implements Iterator<Board> {
-        private static Board[] sb;
+        private final Board[] sb;
         private int index = 0;
 
         public SolutionsIterator(Board[] boards) {

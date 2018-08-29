@@ -13,27 +13,28 @@ public class Board {
     private final int dimension;
     private int zeroIndex;
     private Board twinBoard;
-    private int[] blocks;
+    private final int[] blocks;
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
         dimension = arr.length;
         blocks = new int[dimension*dimension];
 
-        String strOut = "";
-        strOut += dimension + "\n";
+        StringBuilder strOut = new StringBuilder();
+        strOut.append(dimension);
+        strOut.append("\n");
         short k = 0;
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
                 if (j > 0) {
-                    strOut += " ";
+                    strOut.append(" ");
                 }
-                strOut += arr[i][j];
+                strOut.append(arr[i][j]);
                 if (arr[i][j] == 0) {
                     zeroIndex = k;
                 }
                 blocks[k++] = arr[i][j];
             }
-            strOut += "\n";
+            strOut.append("\n");
         }
 
         int[] copy = Arrays.copyOf(blocks, blocks.length);
@@ -46,15 +47,13 @@ public class Board {
             int currentValue = blocks[i];
             if (copy[i] != currentValue && currentValue != 0) {
                 int targetIndex = biSearch(copy, 0, copy.length - 1, currentValue);
-                if (currentValue != 0) {
-                    sum += getManhattanDistance(i, targetIndex, dimension);
-                }
+                sum += getManhattanDistance(i, targetIndex, dimension);
                 hc++;
             }
         }
         hammingCount = hc;
         manhattanSum = sum;
-        stringKey = strOut;
+        stringKey = strOut.toString();
     }
 
     private static int[][] getMatrix(int[] arr, int n) {
