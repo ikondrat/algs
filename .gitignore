@@ -4,3 +4,5 @@ build
 bin
 out
 .idea
+etc/8puzzle/.*
+etc/8puzzle/*.iml

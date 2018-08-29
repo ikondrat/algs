@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
             "type": "java",
             "name": "Debug (Launch)",
@@ -47,6 +46,28 @@
             "projectName": "princeton-algorithms",
             "mainClass": "FastCollinearPoints",
             "args": "etc/collinear/rs1423.txt"
+        },
+        {
+            "type": "java",
+            "name": "Board",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "projectName": "princeton-algorithms",
+            "mainClass": "Board",
+            "args": "etc/8puzzle/puzzle03.txt"
+        },
+        {
+            "type": "java",
+            "name": "Solver",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "projectName": "princeton-algorithms",
+            "mainClass": "Solver",
+            "args": "etc/8puzzle/puzzle3x3-05.txt"
         },
         {
             "type": "java",

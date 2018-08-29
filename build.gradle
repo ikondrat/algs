@@ -41,14 +41,17 @@ apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 
 // exclude checkstyle using -x checkstyleMain
-checkstyleMain {
-    configProperties = ['basedir': "$rootDir/config/checkstyle"]
-    ignoreFailures = false
-    configFile = new File(rootDir, 'config/checkstyle/checkstyle.xml')
-}
+
 
 checkstyle {
     toolVersion = "8.5"
+
+    checkstyleMain {
+        configProperties = ['basedir': "$rootDir/config/checkstyle"]
+        ignoreFailures = false
+        source ='src/main/java'
+        configFile = new File(rootDir, 'config/checkstyle/checkstyle.xml')
+    }
 }
 
 spotbugs {
@@ -56,6 +59,7 @@ spotbugs {
     showProgress = true
     reportLevel = "high"
     includeFilter = file("$rootDir/config/spotbugs/spotbugs.xml")
+    // html.enabled = true
 }
 
 run {
@@ -74,6 +78,13 @@ task createDistCollinear(type: Zip, dependsOn: checkstyleMain){
   from (file('./src/main/java/BruteCollinearPoints.java'))
   from (file('./src/main/java/Point.java'))
   from (file('./src/main/java/FastCollinearPoints.java'))
+}
+
+task createDistPuzzle(type: Zip, dependsOn: checkstyleMain){
+  archiveName=" 8puzzle.zip"
+  destinationDir = file('build/distributions/')
+  from (file('./src/main/java/Board.java'))
+  from (file('./src/main/java/Solver.java'))
 }
 
 run.dependsOn checkstyleMain
