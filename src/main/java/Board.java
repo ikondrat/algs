@@ -33,9 +33,9 @@ public class Board {
                     zeroCoords = new short[]{(short) i, (short) j};
                     continue;
                 }
-                output.append("\n");
                 plainArr[k++] = arr[i][j];
             }
+            output.append("\n");
         }
         Arrays.sort(plainArr, 0, plainArr.length - 1);
 
