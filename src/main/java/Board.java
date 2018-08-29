@@ -150,17 +150,13 @@ public class Board {
 
     @Override
     public boolean equals(Object y) {
-        if (Objects.isNull(y) || !y.getClass().equals(this.getClass())) return false;
-        Board x = (Board) y;
-        if (x.n != n || x.hammingCount != hammingCount || x.manhattanSum != manhattanSum) return false;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (x.blocks[i][j] != blocks[i][j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return Objects.isNull(y) ? false : isEqual(stringKey, y);
+    }
+    private static boolean isEqual(String k, Object y) {
+        return false;
+    }
+    private static boolean isEqual(String k, Board y) {
+        return k.equals(y.stringKey);
     }
 
     // all neighboring boards
