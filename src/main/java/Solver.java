@@ -26,9 +26,9 @@ public class Solver {
         Node current = null;
         while (!bs.isEmpty()) {
             current = bs.delMin();
-
-            if (current.board.isGoal()) break;
             if (visited.contains(current.board)) continue;
+            if (current.board.isGoal()) break;
+            
 
             for (Board next: current.board.neighbors()) {
                 if (!visited.contains(next)) {
@@ -37,7 +37,7 @@ public class Solver {
                         current.moves + 1,
                         current
                     ));
-                    visited.add(current.board);
+                    //visited.add(current.board);
                 }
             }
             visited.add(current.board);
