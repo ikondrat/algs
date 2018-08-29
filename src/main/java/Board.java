@@ -112,10 +112,14 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
+        return getTwinBoard(zeroCoords, blocks, n);
+    }
+
+    private static Board getTwinBoard(short[] zeroCoords, int[][] m, short size) {
         int r1 = -1;
         int r2 = -1;
-        int zeroIndex = getIndexByMatrixCoords(zeroCoords[0], zeroCoords[1], n);
-        for (int i = 0; i < n*n; i++) {
+        int zeroIndex = getIndexByMatrixCoords(zeroCoords[0], zeroCoords[1], size);
+        for (int i = 0; i < size*size; i++) {
             if (i != zeroIndex && r1 == -1) {
                 r1 = i;
                 continue;
@@ -125,14 +129,14 @@ public class Board {
                 break;
             }
         }
-        short[] b1 = getMatrixCoordsByIndex(r1, n);
-        short[] b2 = getMatrixCoordsByIndex(r2, n);
+        short[] b1 = getMatrixCoordsByIndex(r1, size);
+        short[] b2 = getMatrixCoordsByIndex(r2, size);
 
-        exch(blocks, b1[0], b1[1], b2[0], b2[1]);
+        exch(m, b1[0], b1[1], b2[0], b2[1]);
         Board b = new Board(
-            blocks
+            m
         );
-        exch(blocks, b1[0], b1[1], b2[0], b2[1]);
+        exch(m, b1[0], b1[1], b2[0], b2[1]);
         return b;
     }
 
