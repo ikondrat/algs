@@ -1,13 +1,12 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.NoSuchElementException;
-import java.util.Iterator;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Board {
-    private final String stringKey;
-    private Board[] neighbors;
+    private final StringBuilder stringKey;
+    private ArrayList<Board> neighbors;
     private final int manhattanSum;
     private final int hammingCount;
     private final int dimension;
@@ -19,22 +18,22 @@ public class Board {
         dimension = arr.length;
         blocks = new int[dimension*dimension];
 
-        StringBuilder strOut = new StringBuilder();
-        strOut.append(dimension);
-        strOut.append("\n");
+        stringKey = new StringBuilder();
+        stringKey.append(dimension);
+        stringKey.append("\n");
         short k = 0;
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
                 if (j > 0) {
-                    strOut.append(" ");
+                    stringKey.append(" ");
                 }
-                strOut.append(arr[i][j]);
+                stringKey.append(arr[i][j]);
                 if (arr[i][j] == 0) {
                     zeroIndex = k;
                 }
                 blocks[k++] = arr[i][j];
             }
-            strOut.append("\n");
+            stringKey.append("\n");
         }
 
         int[] copy = Arrays.copyOf(blocks, blocks.length);
@@ -53,7 +52,6 @@ public class Board {
         }
         hammingCount = hc;
         manhattanSum = sum;
-        stringKey = strOut.toString();
     }
 
     private static int[][] getMatrix(int[] arr, int n) {
@@ -156,7 +154,7 @@ public class Board {
     public boolean equals(Object y) {
         if (Objects.isNull(y) || y.getClass() != getClass()) return false;
         Board that = (Board) y;
-        return stringKey.equals(that.stringKey);
+        return stringKey.toString().equals(that.stringKey.toString());
     }
 
     // all neighboring boards
@@ -164,9 +162,7 @@ public class Board {
         if (neighbors == null) {
             neighbors = findNeighbors(zeroIndex, blocks, dimension);
         }
-        return () -> {
-            return new NeighborIterator();
-        };
+        return neighbors;
     }
 
     private static void exch(int[] arr, int x, int y) {
@@ -175,73 +171,46 @@ public class Board {
         arr[y] = v;
     }
 
-    private static Board[] findNeighbors(int zeroIndex, int[] blocks, int n) {
+    private static ArrayList<Board> findNeighbors(int zeroIndex, int[] blocks, int n) {
         int[] zeroCoords = getMatrixCoordsByIndex(zeroIndex, n);
         int x = zeroCoords[0];
         int y = zeroCoords[1];
-
-        int k = 0;
-        Board[] boards = new Board[4];
+        ArrayList<Board> nb = new ArrayList<>();
+        
         // left
         if (y > 0) {
             int targetI = getIndexByMatrixCoords(x, y - 1, n);
             exch(blocks, zeroIndex, targetI);
-            boards[k++] = new Board(getMatrix(blocks, n));
+            nb.add(new Board(getMatrix(blocks, n)));
             exch(blocks, zeroIndex, targetI);
         }
         // right
         if (y < n - 1) {
             int targetI = getIndexByMatrixCoords(x, y + 1, n);
             exch(blocks, zeroIndex, targetI);
-            boards[k++] = new Board(getMatrix(blocks, n));
+            nb.add(new Board(getMatrix(blocks, n)));
             exch(blocks, zeroIndex, targetI);
         }
         // top
         if (x > 0) {
             int targetI = getIndexByMatrixCoords(x - 1, y, n);
             exch(blocks, zeroIndex, targetI);
-            boards[k++] = new Board(getMatrix(blocks, n));
+            nb.add(new Board(getMatrix(blocks, n)));
             exch(blocks, zeroIndex, targetI);
         }
         // bottom
         if (x < n - 1) {
             int targetI = getIndexByMatrixCoords(x + 1, y, n);
             exch(blocks, zeroIndex, targetI);
-            boards[k++] = new Board(getMatrix(blocks, n));
+            nb.add(new Board(getMatrix(blocks, n)));
             exch(blocks, zeroIndex, targetI);
         }
-        Board[] out = new Board[k];
-        System.arraycopy(boards, 0, out, 0, k);
-        return out;
+        return nb;
     }
 
     // string representation of this board (in the output format specified below)
     public String toString() {
-        return stringKey;
-    }
-
-    private class NeighborIterator implements Iterator<Board> {
-
-        private int index = 0;
-
-        @Override
-        public boolean hasNext() {
-            return index < neighbors.length;
-        }
-
-        @Override
-        public Board next() {
-            if (hasNext()) {
-                return neighbors[index++];
-            } else {
-                throw new NoSuchElementException("There is no next neighbor.");
-            }
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Removal of neighbors not supported.");
-        }
+        return stringKey.toString();
     }
 
     // unit tests (not graded)

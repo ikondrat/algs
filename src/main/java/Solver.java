@@ -2,6 +2,7 @@ import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -142,7 +143,7 @@ public class Solver {
         private int index = 0;
 
         public SolutionsIterator(Board[] boards) {
-            sb = boards;
+            sb = Arrays.copyOf(boards, boards.length);
         }
 
         @Override
