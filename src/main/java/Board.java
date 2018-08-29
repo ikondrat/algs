@@ -6,16 +6,16 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Board {
     private ArrayList<Board> neighbors;
-    private final int manhattanSum;
+    private final short manhattanSum;
     private final int hammingCount;
     private final int dimension;
     private int zeroIndex;
     private Board twinBoard;
-    private final int[] blocks;
+    private final short[] blocks;
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
         dimension = arr.length;
-        blocks = new int[dimension*dimension];
+        blocks = new short[dimension*dimension];
 
         short k = 0;
         for (int i = 0; i < dimension; i++) {
@@ -23,15 +23,15 @@ public class Board {
                 if (arr[i][j] == 0) {
                     zeroIndex = k;
                 }
-                blocks[k++] = arr[i][j];
+                blocks[k++] = (short) arr[i][j];
             }
         }
 
-        int[] copy = Arrays.copyOf(blocks, blocks.length);
+        short[] copy = Arrays.copyOf(blocks, blocks.length);
         exch(copy, zeroIndex, copy.length - 1);
         Arrays.sort(copy, 0, blocks.length - 1);
 
-        int sum = 0;
+        short sum = 0;
         int hc = 0;
         for (int i = 0; i < copy.length; i++) {
             int currentValue = blocks[i];
@@ -45,7 +45,7 @@ public class Board {
         manhattanSum = sum;
     }
 
-    private static int[][] getMatrix(int[] arr, int n) {
+    private static int[][] getMatrix(short[] arr, int n) {
         int[][] m = new int[n][n];
         int k = 0;
         for (int i = 0; i < n; i++) {
@@ -56,7 +56,7 @@ public class Board {
         return m;
     }
 
-    private static int biSearch(int[] arr, int from, int to, int targetValue) {
+    private static int biSearch(short[] arr, int from, int to, int targetValue) {
         int mid;
         do {
             mid = (from + to) >>> 1;
@@ -88,18 +88,17 @@ public class Board {
         return hammingCount;
     }
 
-    private int getMhDistance(int[] c1, int[] c2) {
-        return Math.abs(c1[0] - c2[0]) + Math.abs(c2[1] - c1[1]);
+    private short getMhDistance(int[] c1, int[] c2) {
+        return (short) (Math.abs(c1[0] - c2[0]) + Math.abs(c2[1] - c1[1]));
     }
 
-    private int getManhattanDistance(int fromIndex, int toIndex, int size) {
+    private short getManhattanDistance(int fromIndex, int toIndex, int size) {
         int[] from = getMatrixCoordsByIndex(fromIndex, size);
         int[] to = getMatrixCoordsByIndex(toIndex, size);
-        int mh = getMhDistance(
+        return getMhDistance(
             from,
             to
         );
-        return mh;
     }
 
     // sum of Manhattan distances between blocks and goal
@@ -120,7 +119,7 @@ public class Board {
         return twinBoard;
     }
 
-    private static Board getTwinBoard(int zeroIndex, int[] m, int size) {
+    private static Board getTwinBoard(int zeroIndex, short[] m, int size) {
         int r1 = -1;
         int r2 = -1;
         for (int i = 0; i < size*size; i++) {
@@ -156,13 +155,13 @@ public class Board {
         return neighbors;
     }
 
-    private static void exch(int[] arr, int x, int y) {
-        int v = arr[x];
+    private static void exch(short[] arr, int x, int y) {
+        short v = arr[x];
         arr[x] = arr[y];
         arr[y] = v;
     }
 
-    private static ArrayList<Board> findNeighbors(int zeroIndex, int[] blocks, int n) {
+    private static ArrayList<Board> findNeighbors(int zeroIndex, short[] blocks, int n) {
         int[] zeroCoords = getMatrixCoordsByIndex(zeroIndex, n);
         int x = zeroCoords[0];
         int y = zeroCoords[1];
