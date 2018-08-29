@@ -284,4 +284,16 @@ public class BoardTest {
         Board b2 = new Board(blocks2);
         assertFalse(b.equals(b2));
     }
+    @Test
+    public void toString_isCorrect() {
+        int[][] blocks = {
+            {1, 0},
+            {2, 3}
+        };
+        Board b = new Board(blocks);
+        assertEquals(
+            b.toString(),
+            "2\n1 0\n2 3\n"
+        );
+    }
 }
