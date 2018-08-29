@@ -9,6 +9,7 @@ public class Board {
     private final short manhattanSum;
     private final int hammingCount;
     private final int dimension;
+    private final int key;
     private int zeroIndex;
     private Board twinBoard;
     private final short[] blocks;
@@ -43,6 +44,7 @@ public class Board {
         }
         hammingCount = hc;
         manhattanSum = sum;
+        key = blocks.hashCode();
     }
 
     private static int[][] getMatrix(short[] arr, int n) {
@@ -144,7 +146,7 @@ public class Board {
     public boolean equals(Object y) {
         if (Objects.isNull(y) || y.getClass() != getClass()) return false;
         Board that = (Board) y;
-        return Arrays.mismatch(blocks, that.blocks) == -1;
+        return key == that.key;
     }
 
     // all neighboring boards
