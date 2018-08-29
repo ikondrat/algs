@@ -13,18 +13,18 @@ public class Board {
     private Board[] neighbors;
     private short manhattanSum;
     private short hammingCount;
-    private int[] zeroCoords;
+    private short[] zeroCoords;
 
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
         n = (short) arr.length;
         blocks = copy(arr);
         int[] plainArr = new int[n*n];
-        int k = 0;
+        short k = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (arr[i][j] == 0) {
-                    zeroCoords = new int[]{i, j};
+                    zeroCoords = new short[]{(short) i,(short) j};
                     continue;
                 }
                 plainArr[k++] = arr[i][j];
@@ -32,9 +32,9 @@ public class Board {
         }
         Arrays.sort(plainArr, 0, plainArr.length - 1);
 
-        int index = 0;
+        short index = 0;
         for (int sortedValue: plainArr) {
-            int[] sc = getMatrixCoordsByIndex(index);
+            short[] sc = getMatrixCoordsByIndex(index, n);
             int currentValue = arr[sc[0]][sc[1]];
             if (sortedValue != currentValue && currentValue != 0) {
                 int targetCoords = biSearch(plainArr, 0, plainArr.length - 1, currentValue);
@@ -46,7 +46,7 @@ public class Board {
         plainArr = null;
     }
 
-    private int biSearch(int[] arr, int from, int to, int targetValue) {
+    private static int biSearch(int[] arr, int from, int to, int targetValue) {
         int mid;
         do {
             mid = (from + to) >>> 1;
@@ -56,14 +56,14 @@ public class Board {
         return arr[mid] == targetValue ? mid : -1;
     }
 
-    private int getIndexByMatrixCoords(int x, int y) {
+    private static int getIndexByMatrixCoords(int x, int y, int n) {
         return (x * n) + y;
     }
 
-    private int[] getMatrixCoordsByIndex(int index) {
-        int[] coords = new int[]{
-            index / n,
-            index % n
+    private static short[] getMatrixCoordsByIndex(int index, int n) {
+        short[] coords = new short[]{
+            (short) (index / n),
+            (short) (index % n)
         };
         return coords;
     }
@@ -78,13 +78,13 @@ public class Board {
         return hammingCount;
     }
 
-    private int getMhDistance(int[] c1, int[] c2) {
+    private int getMhDistance(short[] c1, short[] c2) {
         return Math.abs(c1[0] - c2[0]) + Math.abs(c2[1] - c1[1]);
     }
 
     private int getManhattanDistance(int fromIndex, int toIndex) {
-        int[] from = getMatrixCoordsByIndex(fromIndex);
-        int[] to = getMatrixCoordsByIndex(toIndex);
+        short[] from = getMatrixCoordsByIndex(fromIndex, n);
+        short[] to = getMatrixCoordsByIndex(toIndex, n);
         int mh = getMhDistance(
             from,
             to
@@ -102,7 +102,7 @@ public class Board {
         return hamming() == 0;
     }
 
-    private int[][] copy(int[][] arr) {
+    private static int[][] copy(int[][] arr) {
         int[][] copy = new int[arr.length][arr.length];
         for (int i = 0; i < arr.length; i++) {
             System.arraycopy(arr[i], 0, copy[i], 0, arr[i].length);
@@ -114,7 +114,7 @@ public class Board {
     public Board twin() {
         int r1 = -1;
         int r2 = -1;
-        int zeroIndex = getIndexByMatrixCoords(zeroCoords[0], zeroCoords[1]);
+        int zeroIndex = getIndexByMatrixCoords(zeroCoords[0], zeroCoords[1], n);
         for (int i = 0; i < n*n; i++) {
             if (i != zeroIndex && r1 == -1) {
                 r1 = i;
@@ -125,8 +125,8 @@ public class Board {
                 break;
             }
         }
-        int[] b1 = getMatrixCoordsByIndex(r1);
-        int[] b2 = getMatrixCoordsByIndex(r2);
+        short[] b1 = getMatrixCoordsByIndex(r1, n);
+        short[] b2 = getMatrixCoordsByIndex(r2, n);
 
         exch(blocks, b1[0], b1[1], b2[0], b2[1]);
         Board b = new Board(
@@ -155,22 +155,22 @@ public class Board {
     public Iterable<Board> neighbors() {
         return () -> {
             if (neighbors == null) {
-                findNeighbors();
+                neighbors = findNeighbors(zeroCoords, blocks, n);
             }
             return new NeighborIterator();
         };
     }
 
-    private void exch(int[][] arr, int x1, int y1, int x2, int y2) {
+    private static void exch(int[][] arr, int x1, int y1, int x2, int y2) {
         arr[x1][y1] = arr[x1][y1] ^ arr[x2][y2];
         arr[x2][y2] = arr[x1][y1] ^ arr[x2][y2];
         arr[x1][y1] = arr[x1][y1] ^ arr[x2][y2];
     }
 
-    private void findNeighbors() {
+    private static Board[] findNeighbors(short[] zeroCoords, int[][] blocks, int n) {
         ArrayList<Board> foundNeighbors = new ArrayList<>();
-        int x = zeroCoords[0];
-        int y = zeroCoords[1];
+        short x = zeroCoords[0];
+        short y = zeroCoords[1];
         // left
         if (y > 0) {
             exch(blocks, x, y, x, y - 1);
@@ -211,7 +211,7 @@ public class Board {
             );
             exch(blocks, x, y, x + 1, y);
         }
-        neighbors = foundNeighbors.toArray(new Board[foundNeighbors.size()]);
+        return foundNeighbors.toArray(new Board[foundNeighbors.size()]);
     }
 
     // string representation of this board (in the output format specified below)
