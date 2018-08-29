@@ -150,13 +150,9 @@ public class Board {
 
     @Override
     public boolean equals(Object y) {
-        return Objects.isNull(y) ? false : isEqual(stringKey, y);
-    }
-    private static boolean isEqual(String k, Object y) {
-        return false;
-    }
-    private static boolean isEqual(String k, Board y) {
-        return k.equals(y.stringKey);
+        if (Objects.isNull(y) || y.getClass() != getClass()) return false;
+        Board that = (Board) y;
+        return stringKey.equals(that.stringKey);
     }
 
     // all neighboring boards

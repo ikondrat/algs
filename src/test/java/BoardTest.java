@@ -269,6 +269,16 @@ public class BoardTest {
     }
 
     @Test
+    public void equals_Reflexive() {
+        int[][] blocks = {
+            {1, 0},
+            {2, 3}
+        };
+        Board b = new Board(blocks);
+        assertTrue(b.equals(b));
+    }
+
+    @Test
     public void equals_DifferentBoards() {
         int[][] blocks = {
             {1, 0},
