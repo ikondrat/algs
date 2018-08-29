@@ -24,7 +24,7 @@ public class Board {
                 if (arr[i][j] == 0) {
                     zeroIndex = k;
                 }
-                blocks[k++] = (int) arr[i][j];
+                blocks[k++] = arr[i][j];
             }
         }
 
@@ -44,7 +44,7 @@ public class Board {
         }
         hammingCount = hc;
         manhattanSum = sum;
-        key = blocks.hashCode();
+        key = Arrays.hashCode(blocks);
     }
 
     private static int[][] getMatrix(int[] arr, int n) {
@@ -74,8 +74,8 @@ public class Board {
 
     private static int[] getMatrixCoordsByIndex(int index, int n) {
         int[] coords = {
-            (int) (index / n),
-            (int) (index % n)
+            (index / n),
+            (index % n)
         };
         return coords;
     }
@@ -91,7 +91,7 @@ public class Board {
     }
 
     private int getMhDistance(int[] c1, int[] c2) {
-        return (int) (Math.abs(c1[0] - c2[0]) + Math.abs(c2[1] - c1[1]));
+        return (Math.abs(c1[0] - c2[0]) + Math.abs(c2[1] - c1[1]));
     }
 
     private int getManhattanDistance(int fromIndex, int toIndex, int size) {
