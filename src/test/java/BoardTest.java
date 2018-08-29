@@ -306,4 +306,35 @@ public class BoardTest {
             "2\n1 0\n2 3\n"
         );
     }
+
+    @Test
+    public void neighbors_correctness() {
+        int[][] blocks = {
+            {1, 0, 2},
+            {4, 6, 3},
+            {7, 5, 8}
+        };
+        Board b = new Board(blocks);
+        Iterable<Board> boardsIterable = b.neighbors();
+        int index = 0;
+        Board[] boards = new Board[3];
+        for (Board board: boardsIterable) {
+            boards[index++] = board;
+        }
+
+        assertEquals(
+            "3\n0 1 2\n4 6 3\n7 5 8\n",
+            boards[0].toString()
+        );
+
+        assertEquals(
+            "3\n1 2 0\n4 6 3\n7 5 8\n",
+            boards[1].toString()
+        );
+
+        assertEquals(
+            "3\n1 6 2\n4 0 3\n7 5 8\n",
+            boards[2].toString()
+        );
+    }
 }
