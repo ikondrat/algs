@@ -28,7 +28,7 @@ public class Solver {
             current = bs.delMin();
 
             if (current.board.isGoal()) break;
-            
+            if (visited.contains(current.board)) continue;
 
             for (Board next: current.board.neighbors()) {
                 if (!visited.contains(next)) {
