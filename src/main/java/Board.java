@@ -5,7 +5,6 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Board {
-    private final StringBuilder stringKey;
     private ArrayList<Board> neighbors;
     private final int manhattanSum;
     private final int hammingCount;
@@ -18,22 +17,14 @@ public class Board {
         dimension = arr.length;
         blocks = new int[dimension*dimension];
 
-        stringKey = new StringBuilder();
-        stringKey.append(dimension);
-        stringKey.append("\n");
         short k = 0;
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
-                if (j > 0) {
-                    stringKey.append(" ");
-                }
-                stringKey.append(arr[i][j]);
                 if (arr[i][j] == 0) {
                     zeroIndex = k;
                 }
                 blocks[k++] = arr[i][j];
             }
-            stringKey.append("\n");
         }
 
         int[] copy = Arrays.copyOf(blocks, blocks.length);
@@ -154,7 +145,7 @@ public class Board {
     public boolean equals(Object y) {
         if (Objects.isNull(y) || y.getClass() != getClass()) return false;
         Board that = (Board) y;
-        return stringKey.toString().equals(that.stringKey.toString());
+        return Arrays.mismatch(blocks, that.blocks) == -1;
     }
 
     // all neighboring boards
@@ -210,7 +201,18 @@ public class Board {
 
     // string representation of this board (in the output format specified below)
     public String toString() {
-        return stringKey.toString();
+        StringBuilder stringB = new StringBuilder();
+        stringB.append(dimension);
+        for (int i = 0; i < blocks.length; i++) {
+            if (i % dimension == 0) {
+                stringB.append("\n");
+            } else {
+                stringB.append(" ");
+            }
+            stringB.append(blocks[i]);
+        }
+        stringB.append("\n");
+        return stringB.toString();
     }
 
     // unit tests (not graded)
