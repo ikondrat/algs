@@ -9,11 +9,11 @@ import edu.princeton.cs.algs4.StdOut;
 public class Board {
     private final int[][] blocks;
     private final short n;
-    private String stringKey;
+    private final String stringKey;
     private Board[] neighbors;
-    private short manhattanSum;
-    private short hammingCount;
-    private short[] zeroCoords;
+    private final int manhattanSum;
+    private final int hammingCount;
+    private final short[] zeroCoords;
 
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
@@ -23,6 +23,7 @@ public class Board {
         StringBuilder output = new StringBuilder();
         output.append(String.format("%d\n", n));
         short k = 0;
+        short[] zc = new short[2];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (j > 0) {
@@ -30,26 +31,31 @@ public class Board {
                 }
                 output.append(String.format("%d", blocks[i][j]));
                 if (arr[i][j] == 0) {
-                    zeroCoords = new short[]{(short) i, (short) j};
+                    zc = new short[]{(short) i, (short) j};
                     continue;
                 }
                 plainArr[k++] = arr[i][j];
             }
             output.append("\n");
         }
+        zeroCoords = zc;
         Arrays.sort(plainArr, 0, plainArr.length - 1);
 
         short index = 0;
+        int sum = 0;
+        int hc = 0;
         for (int sortedValue: plainArr) {
             short[] sc = getMatrixCoordsByIndex(index, n);
             int currentValue = arr[sc[0]][sc[1]];
             if (sortedValue != currentValue && currentValue != 0) {
                 int targetCoords = biSearch(plainArr, 0, plainArr.length - 1, currentValue);
-                manhattanSum += getManhattanDistance(index, targetCoords);
-                hammingCount++;
+                sum += getManhattanDistance(index, targetCoords);
+                hc++;
             }
             index++;
         }
+        hammingCount = hc;
+        manhattanSum = sum;
         plainArr = null;
         stringKey = output.toString();
     }
