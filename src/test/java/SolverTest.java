@@ -1,6 +1,7 @@
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class SolverTest {
@@ -267,6 +268,8 @@ public class SolverTest {
             s.isSolvable()
         );
     }
+    
+
 
     @Test
     public void testUnsolvedBoardSolutions() {
@@ -283,6 +286,23 @@ public class SolverTest {
         assertEquals(
             s.moves(),
             13
+        );
+    }
+
+    @Test
+    public void testUnsolvedNullSolutions() {
+        int[][] blocks = {
+            {3, 2, 4, 8},
+            {1, 6, 0, 12},
+            {5, 10, 7, 11},
+            {9, 13, 14, 15}
+        };
+        Solver s = new Solver(new Board(blocks));
+        assertFalse(
+            s.isSolvable()
+        );
+        assertNull(
+            s.solution()
         );
     }
 }

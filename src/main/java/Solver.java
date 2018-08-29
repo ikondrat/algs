@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Solver {
-    private boolean isSolved;
-    private Node goalBoard;
-    private ArrayList<Board> solutionBoards;
+    private final boolean isSolved;
+    private final Node goalBoard;
+    private final ArrayList<Board> solutionBoards;
 
     public Solver(Board initial) {
         if (isNull(initial)) {
@@ -15,7 +15,6 @@ public class Solver {
                 "The board is expected to be passed into the constructor"
             );
         }
-        isSolved = false;
         MinPQ<Node> bs = new MinPQ<>();
         Node rootNode = new Node(initial, 0, null);
         Node rootNodeTwin = new Node(initial.twin(), 0, null);
@@ -29,6 +28,7 @@ public class Solver {
             current = bs.delMin();
 
             if (current.board.isGoal()) break;
+            
 
             for (Board next: current.board.neighbors()) {
                 if (!visited.contains(next)) {
@@ -37,17 +37,17 @@ public class Solver {
                         current.moves + 1,
                         current
                     ));
+                    visited.add(current.board);
                 }
             }
+            visited.add(current.board);
         }
 
-        visited.add(current.board);
-        if (current.board.isGoal()) {
-            goalBoard = current;
-            isSolved = !current.isTwin;
-        }
+        goalBoard = current.board.isGoal() ? current : null;
+        isSolved = !current.isTwin;
 
-        solutionBoards = new ArrayList<>();
+        solutionBoards = !isSolved ? null : new ArrayList<>();
+        if (!isSolved) return;
         while (current != null) {
             solutionBoards.add(current.board);
             current = current.prev;
