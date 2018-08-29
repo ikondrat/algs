@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 public class FastCollinearPoints {
-    private final ArrayList<LineSegment> lineSegments;
-    private final ArrayList<String> lineSegmentsKeys;
+    private ArrayList<LineSegment> lineSegments;
+    private ArrayList<String> lineSegmentsKeys;
 
     public FastCollinearPoints(Point[] points) {
         double previousSlope = Double.NEGATIVE_INFINITY;
@@ -17,27 +17,19 @@ public class FastCollinearPoints {
         validate(points);
         lineSegmentsKeys = new ArrayList<>();
         lineSegments = new ArrayList<>();
-        Arrays.sort(points);
+
+
+        // initial sort
         for (int i = 0; i < points.length; i++) {
             sortPoint = points[i];
-            if (points[i] == null) {
-                throw new java.lang.IllegalArgumentException("one of the Point is null");
-            }
-            
-            if (i > 0 && points[i].compareTo(points[i -1]) == 0) {
-                throw new java.lang.IllegalArgumentException("duplicated point");
-            }
             Point[] spoints = Arrays.copyOf(points, points.length);
             // group the points by slope
             Arrays.sort(spoints, sortPoint.slopeOrder());
             int cpCount = 0;
             int fromPoint = 1;
             for (int j = 1; j < spoints.length; j++) {
-                if (spoints[j] == null) {
-                    throw new java.lang.IllegalArgumentException("one of the Point is null");
-                }
                 comparePoint = spoints[j];
-                double slope = getSlope(sortPoint, comparePoint);
+                double slope = sortPoint.slopeTo(comparePoint);
 
                 if (!Double.isInfinite(previousSlope) && !equals(slope, previousSlope)) {
                     if (cpCount >= 3) {
@@ -76,7 +68,7 @@ public class FastCollinearPoints {
     }
 
     private boolean less(Point x, Point y) {
-        return x.compareTo(y) < 0;
+        return x.compareTo(y) == -1;
     }
 
     private Point[] getSegment(Point sortPoint, Point[] arr, int from, int to) {
@@ -90,13 +82,21 @@ public class FastCollinearPoints {
         return arrP;
     }
 
-    private Double getSlope(Point x, Point y) {
-        return x.slopeTo(y);
-    }
-
     private void validate(Point[] points) {
         if (points == null) {
             throw new java.lang.IllegalArgumentException("arguments is null");
+        }
+        ArrayList<Point> pKeys = new ArrayList<>();
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] == null) {
+                throw new java.lang.IllegalArgumentException("one of the Point is null");
+            }
+            for (int j = 0; j < pKeys.size(); j++) {
+                if (pKeys.get(j).compareTo(points[i]) == 0) {
+                    throw new java.lang.IllegalArgumentException("duplicated point");
+                }
+            }
+            pKeys.add(points[i]);
         }
     }
 
