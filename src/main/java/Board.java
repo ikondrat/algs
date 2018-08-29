@@ -5,14 +5,13 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Board {
-    private ArrayList<Board> neighbors;
     private final int manhattanSum;
     private final int hammingCount;
     private final int dimension;
     private final int key;
     private int zeroIndex;
-    private Board twinBoard;
     private final int[] blocks;
+
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
         dimension = arr.length;
@@ -115,10 +114,7 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        if (twinBoard == null) {
-            twinBoard = getTwinBoard(zeroIndex, blocks, dimension);
-        }
-        return twinBoard;
+        return getTwinBoard(zeroIndex, blocks, dimension);
     }
 
     private static Board getTwinBoard(int zeroIndex, int[] m, int size) {
@@ -151,10 +147,7 @@ public class Board {
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        if (neighbors == null) {
-            neighbors = findNeighbors(zeroIndex, blocks, dimension);
-        }
-        return neighbors;
+        return findNeighbors(zeroIndex, blocks, dimension);
     }
 
     private static void exch(int[] arr, int x, int y) {
