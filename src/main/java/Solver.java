@@ -61,7 +61,7 @@ public class Solver {
         }
     }
 
-    private Board[] toArray(Iterable<Board> itr) {
+    private static Board[] toArray(Iterable<Board> itr) {
         ArrayList<Board> ret = new ArrayList<>();
         for (Board t : itr) {
             ret.add(t);
@@ -71,7 +71,7 @@ public class Solver {
         return b;
     }
 
-    private class SolverNode implements Comparable<SolverNode> {
+    private static class SolverNode implements Comparable<SolverNode> {
         public final short moves;
         public boolean isTwin = false;
         private final Board board;
@@ -117,7 +117,7 @@ public class Solver {
         }
     }
 
-    private boolean isNull(Object x) {
+    private static boolean isNull(Object x) {
         return x == null;
     }
 
@@ -133,22 +133,27 @@ public class Solver {
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
         return () -> {
-            return new SolutionsIterator();
+            return new SolutionsIterator(solutionBoards);
         };
     }
 
-    private class SolutionsIterator implements Iterator<Board> {
+    private static class SolutionsIterator implements Iterator<Board> {
+        private static Board[] sb;
         private int index = 0;
+
+        public SolutionsIterator(Board[] boards) {
+            sb = boards;
+        }
 
         @Override
         public boolean hasNext() {
-            return index < solutionBoards.length;
+            return index < sb.length;
         }
 
         @Override
         public Board next() {
             if (hasNext()) {
-                return solutionBoards[index++];
+                return sb[index++];
             } else {
                 throw new NoSuchElementException("There is no next solution.");
             }
