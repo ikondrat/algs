@@ -20,13 +20,20 @@ public class Board {
         n = (short) arr.length;
         blocks = copy(arr);
         int[] plainArr = new int[n*n];
+        StringBuilder output = new StringBuilder();
+        output.append(String.format("%d\n", n));
         short k = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
+                if (j > 0) {
+                    output.append(" ");
+                }
+                output.append(String.format("%d", blocks[i][j]));
                 if (arr[i][j] == 0) {
-                    zeroCoords = new short[]{(short) i,(short) j};
+                    zeroCoords = new short[]{(short) i, (short) j};
                     continue;
                 }
+                output.append("\n");
                 plainArr[k++] = arr[i][j];
             }
         }
@@ -44,6 +51,7 @@ public class Board {
             index++;
         }
         plainArr = null;
+        stringKey = output.toString();
     }
 
     private static int biSearch(int[] arr, int from, int to, int targetValue) {
@@ -220,19 +228,6 @@ public class Board {
 
     // string representation of this board (in the output format specified below)
     public String toString() {
-        if (stringKey != null) return stringKey;
-        StringBuilder output = new StringBuilder();
-        output.append(String.format("%d\n", n));
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (j > 0) {
-                    output.append(" ");
-                }
-                output.append(String.format("%d", blocks[i][j]));
-            }
-            output.append("\n");
-        }
-        stringKey = output.toString();
         return stringKey;
     }
 
