@@ -2,14 +2,12 @@ import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.Collections;
 
 public class Solver {
     private boolean isSolved;
-    private SolverNode goalBoard;
-    private final Board[] solutionBoards;
+    private Node goalBoard;
+    private ArrayList<Board> solutionBoards;
 
     public Solver(Board initial) {
         if (isNull(initial)) {
@@ -18,103 +16,65 @@ public class Solver {
             );
         }
         isSolved = false;
-        MinPQ<SolverNode> bs = new MinPQ<>();
-        SolverNode rootNode = new SolverNode(initial, 0, null, null);
-        SolverNode rootNodeTwin = new SolverNode(initial.twin(), 0, null, null);
+        MinPQ<Node> bs = new MinPQ<>();
+        Node rootNode = new Node(initial, 0, null);
+        Node rootNodeTwin = new Node(initial.twin(), 0, null);
         bs.insert(rootNode);
         bs.insert(rootNodeTwin);
         rootNodeTwin.isTwin = true;
 
-        SolverNode current = null;
+        ArrayList<Board> visited = new ArrayList<>();
+        Node current = null;
         while (!bs.isEmpty()) {
             current = bs.delMin();
 
-            if (current.isGoal) break;
+            if (current.board.isGoal()) break;
 
-            for (Board b: current.neighbors) {
-                SolverNode root = current.root != null ? current.root : current; 
-                int x = root.getMoves(b);
-                if (x == -1 || current.moves + 1 < x) {
-                    root.addHistory(b, current.moves + 1, x);
-                    SolverNode sn = new SolverNode(
-                        b,
+            for (Board next: current.board.neighbors()) {
+                if (!visited.contains(next)) {
+                    bs.insert(new Node(
+                        next,
                         current.moves + 1,
-                        root,
                         current
-                    );
-                    bs.insert(sn);
+                    ));
                 }
-                
             }
         }
 
-        SolverNode root = current.root != null ? current.root : current;
-        if (current.isGoal) {
+        visited.add(current.board);
+        if (current.board.isGoal()) {
             goalBoard = current;
-            isSolved = !root.isTwin;
+            isSolved = !current.isTwin;
         }
 
-        solutionBoards = new Board[goalBoard.moves + 1];
-        int n = solutionBoards.length;
+        solutionBoards = new ArrayList<>();
         while (current != null) {
-            solutionBoards[--n] = current.board;
+            solutionBoards.add(current.board);
             current = current.prev;
         }
+        Collections.reverse(solutionBoards);
     }
 
-    private static Board[] toArray(Iterable<Board> itr) {
-        ArrayList<Board> ret = new ArrayList<>();
-        for (Board t : itr) {
-            ret.add(t);
-        }
-        Board[] b = new Board[ret.size()];
-        ret.toArray(b);
-        return b;
-    }
-
-    private static class SolverNode implements Comparable<SolverNode> {
-        public final short moves;
-        public boolean isTwin = false;
+    private static class Node implements Comparable<Node> {
+        public boolean isTwin;
+        private final int moves;
+        private final Node prev;
         private final Board board;
-        private final boolean isGoal;
-        private final short priority;
-        private final Board[] neighbors;
-        private final SolverNode root;
-        private final SolverNode prev;
-        private final ArrayList<String> historyBoards;
-        private final ArrayList<Short> historyBoardsPrio;
+        private final int priority;
 
-        public SolverNode(Board b, int m, SolverNode r, SolverNode p) {
-            board = b;
-            root = r;
-            isGoal = b.isGoal();
-            neighbors = toArray(b.neighbors());
-            moves = (short) m;
+        public Node(Board b, int m, Node p) {
+            moves = m;
             prev = p;
-            priority = (short) (b.manhattan() + m);
-            historyBoards = new ArrayList<>();
-            historyBoardsPrio = new ArrayList<>();
-            if (r == null) {
-                historyBoards.add(b.toString());
-                historyBoardsPrio.add((short) 0);
-            }
+            board = b;
+            priority = b.manhattan() + m;
+            isTwin = p != null ? p.isTwin : false;
         }
 
-        public int compareTo(SolverNode that) {
+        public int compareTo(Node that) {
             int diff = priority - that.priority;
             if (diff < 0) return -1;
             if (diff > 0) return 1;
             return 0;
-        }
-
-        public int getMoves(Board b) {
-            int i = historyBoards.indexOf(b.toString());
-            return i != -1 ? historyBoardsPrio.get(i) : -1;
-        }
-
-        public void addHistory(Board b, int m, int index) {
-            historyBoards.add(b.toString());
-            historyBoardsPrio.add((short) m);
         }
     }
 
@@ -133,37 +93,7 @@ public class Solver {
     }
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
-        return () -> {
-            return new SolutionsIterator(solutionBoards);
-        };
-    }
-
-    private static class SolutionsIterator implements Iterator<Board> {
-        private final Board[] sb;
-        private int index = 0;
-
-        public SolutionsIterator(Board[] boards) {
-            sb = Arrays.copyOf(boards, boards.length);
-        }
-
-        @Override
-        public boolean hasNext() {
-            return index < sb.length;
-        }
-
-        @Override
-        public Board next() {
-            if (hasNext()) {
-                return sb[index++];
-            } else {
-                throw new NoSuchElementException("There is no next solution.");
-            }
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Removal of solutions is not supported.");
-        }
+        return solutionBoards;
     }
 
     // solve a slider puzzle (given below)
