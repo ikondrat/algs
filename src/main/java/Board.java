@@ -8,35 +8,36 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Board {
     private final int[][] blocks;
-    private final short n;
     private final String stringKey;
     private Board[] neighbors;
     private final int manhattanSum;
     private final int hammingCount;
     private final short[] zeroCoords;
+    private Board twinBoard;
 
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
-        n = (short) arr.length;
-        blocks = copy(arr);
-        int[] plainArr = new int[n*n];
-        StringBuilder output = new StringBuilder();
-        output.append(String.format("%d\n", n));
+        int size = arr.length;
+        blocks = arr;
+        int[] plainArr = new int[size*size];
+
+        String strOut = "";
+        strOut += size + "\n";
         short k = 0;
         short[] zc = new short[2];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 if (j > 0) {
-                    output.append(" ");
+                    strOut += " ";
                 }
-                output.append(String.format("%d", blocks[i][j]));
+                strOut += blocks[i][j];
                 if (arr[i][j] == 0) {
                     zc = new short[]{(short) i, (short) j};
                     continue;
                 }
                 plainArr[k++] = arr[i][j];
             }
-            output.append("\n");
+            strOut += "\n";
         }
         zeroCoords = zc;
         Arrays.sort(plainArr, 0, plainArr.length - 1);
@@ -45,11 +46,11 @@ public class Board {
         int sum = 0;
         int hc = 0;
         for (int sortedValue: plainArr) {
-            short[] sc = getMatrixCoordsByIndex(index, n);
+            short[] sc = getMatrixCoordsByIndex(index, size);
             int currentValue = arr[sc[0]][sc[1]];
             if (sortedValue != currentValue && currentValue != 0) {
                 int targetCoords = biSearch(plainArr, 0, plainArr.length - 1, currentValue);
-                sum += getManhattanDistance(index, targetCoords);
+                sum += getManhattanDistance(index, targetCoords, size);
                 hc++;
             }
             index++;
@@ -57,7 +58,7 @@ public class Board {
         hammingCount = hc;
         manhattanSum = sum;
         plainArr = null;
-        stringKey = output.toString();
+        stringKey = strOut;
     }
 
     private static int biSearch(int[] arr, int from, int to, int targetValue) {
@@ -84,7 +85,7 @@ public class Board {
 
     // board dimension n
     public int dimension() {
-        return n;
+        return blocks.length;
     }
 
     // number of blocks out of place
@@ -96,9 +97,9 @@ public class Board {
         return Math.abs(c1[0] - c2[0]) + Math.abs(c2[1] - c1[1]);
     }
 
-    private int getManhattanDistance(int fromIndex, int toIndex) {
-        short[] from = getMatrixCoordsByIndex(fromIndex, n);
-        short[] to = getMatrixCoordsByIndex(toIndex, n);
+    private int getManhattanDistance(int fromIndex, int toIndex, int size) {
+        short[] from = getMatrixCoordsByIndex(fromIndex, size);
+        short[] to = getMatrixCoordsByIndex(toIndex, size);
         int mh = getMhDistance(
             from,
             to
@@ -126,10 +127,13 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        return getTwinBoard(zeroCoords, blocks, n);
+        if (twinBoard == null) {
+            twinBoard = getTwinBoard(zeroCoords, blocks, blocks.length);
+        }
+        return twinBoard;
     }
 
-    private static Board getTwinBoard(short[] zeroCoords, int[][] m, short size) {
+    private static Board getTwinBoard(short[] zeroCoords, int[][] m, int size) {
         int r1 = -1;
         int r2 = -1;
         int zeroIndex = getIndexByMatrixCoords(zeroCoords[0], zeroCoords[1], size);
@@ -163,10 +167,10 @@ public class Board {
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
+        if (neighbors == null) {
+            neighbors = findNeighbors(zeroCoords, blocks, blocks.length);
+        }
         return () -> {
-            if (neighbors == null) {
-                neighbors = findNeighbors(zeroCoords, blocks, n);
-            }
             return new NeighborIterator();
         };
     }
