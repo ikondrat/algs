@@ -1,8 +1,5 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdOut;
 
 public class Board {
     private final int manhattanSum;
@@ -10,6 +7,7 @@ public class Board {
     private final int dimension;
     private final boolean isSorted;
     private final int key;
+    private final int currentClass;
     private int zeroIndex;
     private final int[] blocks;
 
@@ -46,6 +44,7 @@ public class Board {
         manhattanSum = sum;
         key = Arrays.hashCode(blocks);
         isSorted = hammingCount == 0;
+        currentClass = getClass().hashCode();
     }
 
     private static int[][] getMatrix(int[] arr, int n) {
@@ -142,7 +141,7 @@ public class Board {
 
     @Override
     public boolean equals(Object y) {
-        if (!(y instanceof Board)) return false;
+        if (y == null || y.getClass().hashCode() != currentClass) return false;
         Board that = (Board) y;
         return key == that.key;
     }
@@ -213,14 +212,5 @@ public class Board {
 
     // unit tests (not graded)
     public static void main(String[] args) {
-        In in = new In(args[0]);
-        int n = in.readInt();
-        int[][] blocks = new int[n][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                blocks[i][j] = in.readInt();
-        Board initial = new Board(blocks);
-
-        StdOut.print(initial.toString());
     }
 }

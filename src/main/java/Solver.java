@@ -7,6 +7,7 @@ import java.util.Collections;
 public class Solver {
     private final boolean isSolved;
     private final Node goalBoard;
+    private final int moves;
     private final ArrayList<Board> solutionBoards;
 
     public Solver(Board initial) {
@@ -37,7 +38,6 @@ public class Solver {
                         current.moves + 1,
                         current
                     ));
-                    //visited.add(current.board);
                 }
             }
             visited.add(current.board);
@@ -46,6 +46,7 @@ public class Solver {
         goalBoard = current.isSorted ? current : null;
         isSolved = !current.isTwin;
 
+        moves = current.moves;
         solutionBoards = !isSolved ? null : new ArrayList<>();
         if (!isSolved) return;
         while (current != null) {

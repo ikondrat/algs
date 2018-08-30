@@ -280,9 +280,6 @@ public class SolverTest {
             {9, 13, 14, 15}
         };
         Solver s = new Solver(new Board(blocks));
-        assertFalse(
-            s.isSolvable()
-        );
         assertEquals(
             s.moves(),
             13
