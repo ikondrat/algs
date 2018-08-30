@@ -282,7 +282,7 @@ public class SolverTest {
         Solver s = new Solver(new Board(blocks));
         assertEquals(
             s.moves(),
-            13
+            -1
         );
     }
 
