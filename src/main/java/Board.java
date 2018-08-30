@@ -70,18 +70,6 @@ public class Board {
         return arr[mid] == targetValue ? mid : -1;
     }
 
-    private static int getIndexByMatrixCoords(int x, int y, int n) {
-        return (x * n) + y;
-    }
-
-    private static int[] getMatrixCoordsByIndex(int index, int n) {
-        int[] coords = {
-            (index / n),
-            (index % n)
-        };
-        return coords;
-    }
-
     // board dimension n
     public int dimension() {
         return dimension;
@@ -92,16 +80,10 @@ public class Board {
         return hammingCount;
     }
 
-    private int getMhDistance(int[] c1, int[] c2) {
-        return (Math.abs(c1[0] - c2[0]) + Math.abs(c2[1] - c1[1]));
-    }
-
     private int getManhattanDistance(int fromIndex, int toIndex, int size) {
-        int[] from = getMatrixCoordsByIndex(fromIndex, size);
-        int[] to = getMatrixCoordsByIndex(toIndex, size);
-        return getMhDistance(
-            from,
-            to
+        return (
+            Math.abs((fromIndex / size) - (toIndex / size)) + 
+            Math.abs((fromIndex % size) - (toIndex % size))
         );
     }
 
@@ -166,35 +148,33 @@ public class Board {
     }
 
     private static ArrayList<Board> findNeighbors(int zeroIndex, int[] blocks, int n) {
-        int[] zeroCoords = getMatrixCoordsByIndex(zeroIndex, n);
-        int x = zeroCoords[0];
-        int y = zeroCoords[1];
+        int x = (zeroIndex / n);
+        int y = (zeroIndex % n);
         ArrayList<Board> nb = new ArrayList<>();
-        
         // left
         if (y > 0) {
-            int targetI = getIndexByMatrixCoords(x, y - 1, n);
+            int targetI = (x * n) + y - 1;
             exch(blocks, zeroIndex, targetI);
             nb.add(new Board(getMatrix(blocks, n)));
             exch(blocks, zeroIndex, targetI);
         }
         // right
         if (y < n - 1) {
-            int targetI = getIndexByMatrixCoords(x, y + 1, n);
+            int targetI = (x * n) + y + 1;
             exch(blocks, zeroIndex, targetI);
             nb.add(new Board(getMatrix(blocks, n)));
             exch(blocks, zeroIndex, targetI);
         }
         // top
         if (x > 0) {
-            int targetI = getIndexByMatrixCoords(x - 1, y, n);
+            int targetI = ((x - 1) * n) + y;
             exch(blocks, zeroIndex, targetI);
             nb.add(new Board(getMatrix(blocks, n)));
             exch(blocks, zeroIndex, targetI);
         }
         // bottom
         if (x < n - 1) {
-            int targetI = getIndexByMatrixCoords(x + 1, y, n);
+            int targetI = ((x + 1) * n) + y;
             exch(blocks, zeroIndex, targetI);
             nb.add(new Board(getMatrix(blocks, n)));
             exch(blocks, zeroIndex, targetI);
