@@ -46,7 +46,7 @@ public class Solver {
         goalBoard = current.isSorted ? current : null;
         isSolved = !current.isTwin;
 
-        moves = current.moves;
+        moves = isSolved ? current.moves : -1;
         solutionBoards = !isSolved ? null : new ArrayList<>();
         if (!isSolved) return;
         while (current != null) {
@@ -92,7 +92,7 @@ public class Solver {
 
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
-        return goalBoard.moves;
+        return moves;
     }
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
