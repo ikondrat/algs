@@ -27,11 +27,12 @@ public class Solver {
         Node current = null;
         while (!bs.isEmpty()) {
             current = bs.delMin();
-            if (visited.contains(current.board)) continue;
+            Board b = current.board;
+            if (visited.contains(b)) continue;
             if (current.isSorted) break;
             
 
-            for (Board next: current.board.neighbors()) {
+            for (Board next: b.neighbors()) {
                 if (!visited.contains(next)) {
                     bs.insert(new Node(
                         next,
@@ -40,7 +41,7 @@ public class Solver {
                     ));
                 }
             }
-            visited.add(current.board);
+            visited.add(b);
         }
 
         goalBoard = current.isSorted ? current : null;
@@ -72,11 +73,13 @@ public class Solver {
             moves = m;
             prev = p;
             board = b;
-            priority = b.manhattan() + m;
-            isSorted = b.isGoal();
+            int mh = b.manhattan();
+            priority = mh + m;
+            isSorted = mh == 0;
             isTwin = p != null ? p.isTwin : false;
         }
 
+        @Override
         public int compareTo(Node that) {
             int diff = priority - that.priority;
             if (diff < 0) return -1;
