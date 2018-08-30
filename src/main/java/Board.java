@@ -8,6 +8,7 @@ public class Board {
     private final int manhattanSum;
     private final int hammingCount;
     private final int dimension;
+    private final boolean isSorted;
     private final int key;
     private int zeroIndex;
     private final int[] blocks;
@@ -44,6 +45,7 @@ public class Board {
         hammingCount = hc;
         manhattanSum = sum;
         key = Arrays.hashCode(blocks);
+        isSorted = hammingCount == 0;
     }
 
     private static int[][] getMatrix(int[] arr, int n) {
@@ -109,7 +111,7 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
-        return hamming() == 0;
+        return isSorted;
     }
 
     // a board that is obtained by exchanging any pair of blocks
@@ -140,7 +142,7 @@ public class Board {
 
     @Override
     public boolean equals(Object y) {
-        if (Objects.isNull(y) || y.getClass() != getClass()) return false;
+        if (!(y instanceof Board)) return false;
         Board that = (Board) y;
         return key == that.key;
     }

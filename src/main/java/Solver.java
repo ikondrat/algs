@@ -27,7 +27,7 @@ public class Solver {
         while (!bs.isEmpty()) {
             current = bs.delMin();
             if (visited.contains(current.board)) continue;
-            if (current.board.isGoal()) break;
+            if (current.isSorted) break;
             
 
             for (Board next: current.board.neighbors()) {
@@ -43,7 +43,7 @@ public class Solver {
             visited.add(current.board);
         }
 
-        goalBoard = current.board.isGoal() ? current : null;
+        goalBoard = current.isSorted ? current : null;
         isSolved = !current.isTwin;
 
         solutionBoards = !isSolved ? null : new ArrayList<>();
@@ -61,12 +61,14 @@ public class Solver {
         private final Node prev;
         private final Board board;
         private final int priority;
+        private final boolean isSorted;
 
         public Node(Board b, int m, Node p) {
             moves = m;
             prev = p;
             board = b;
             priority = b.manhattan() + m;
+            isSorted = b.isGoal();
             isTwin = p != null ? p.isTwin : false;
         }
 
