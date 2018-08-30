@@ -7,8 +7,8 @@ import java.util.Collections;
 public class Solver {
     private final boolean isSolved;
     private final Node goalBoard;
-    private final int moves;
-    private final ArrayList<Board> solutionBoards;
+    private int moves;
+    private ArrayList<Board> solutionBoards;
 
     public Solver(Board initial) {
         if (isNull(initial)) {
@@ -46,9 +46,13 @@ public class Solver {
         goalBoard = current.isSorted ? current : null;
         isSolved = !current.isTwin;
 
-        moves = isSolved ? current.moves : -1;
-        solutionBoards = !isSolved ? null : new ArrayList<>();
-        if (!isSolved) return;
+        if (!isSolved) {
+            solutionBoards = null;
+            moves = -1;
+            return;
+        }
+        moves = current.moves;
+        solutionBoards = new ArrayList<>();
         while (current != null) {
             solutionBoards.add(current.board);
             current = current.prev;
@@ -92,7 +96,7 @@ public class Solver {
 
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
-        return moves;
+        return goalBoard.moves;
     }
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {

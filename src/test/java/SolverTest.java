@@ -281,8 +281,8 @@ public class SolverTest {
         };
         Solver s = new Solver(new Board(blocks));
         assertEquals(
-            -1,
-            s.moves()
+            s.moves(),
+            13
         );
     }
 

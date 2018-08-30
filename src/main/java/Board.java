@@ -9,6 +9,8 @@ public class Board {
     private final int key;
     private final int currentClass;
     private int zeroIndex;
+    private ArrayList<Board> nBoards;
+    private Board twinBoard;
     private final int[] blocks;
 
     // construct a board from an n-by-n array of blocks
@@ -115,7 +117,10 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        return getTwinBoard(zeroIndex, blocks, dimension);
+        if (twinBoard == null) {
+            twinBoard = getTwinBoard(zeroIndex, blocks, dimension);
+        }
+        return twinBoard;
     }
 
     private static Board getTwinBoard(int zeroIndex, int[] m, int size) {
@@ -148,7 +153,10 @@ public class Board {
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        return findNeighbors(zeroIndex, blocks, dimension);
+        if (nBoards == null) {
+            nBoards = findNeighbors(zeroIndex, blocks, dimension);
+        }
+        return nBoards;
     }
 
     private static void exch(int[] arr, int x, int y) {
