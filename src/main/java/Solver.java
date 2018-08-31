@@ -24,8 +24,6 @@ public class Solver {
         rootNodeTwin.isTwin = true;
 
         ArrayList<Board> visited = new ArrayList<>();
-        ArrayList<Board> queued = new ArrayList<>();
-        ArrayList<Integer> queuedPrio = new ArrayList<>();
         Node current = null;
         while (!bs.isEmpty()) {
             current = bs.delMin();
@@ -33,26 +31,16 @@ public class Solver {
             if (visited.contains(b)) continue;
             if (current.isSorted) break;
             
-            int nMoves = current.moves + 1;
+
             for (Board next: b.neighbors()) {
-                int definedIndex = queued.indexOf(next);
-                if (!visited.contains(next) || (definedIndex != -1 && queuedPrio.get(definedIndex) > nMoves)) {
+                if (!visited.contains(next)) {
                     bs.insert(new Node(
                         next,
-                        nMoves,
+                        current.moves + 1,
                         current
                     ));
-                    if (definedIndex != -1) {
-                        queued.add(definedIndex, next);
-                        queuedPrio.add(definedIndex, nMoves);
-                    } else {
-                        queued.add(next);
-                        queuedPrio.add(nMoves);
-                    }
-                    
                 }
             }
-            queued.remove(b);
             visited.add(b);
         }
 
