@@ -7,6 +7,7 @@ public class Board {
     private final int dimension;
     private final boolean isSorted;
     private final int key;
+    private final String stringKey;
     private final int currentClass;
     private int zeroIndex;
     private ArrayList<Board> nBoards;
@@ -47,6 +48,19 @@ public class Board {
         key = Arrays.hashCode(blocks);
         isSorted = hammingCount == 0;
         currentClass = getClass().hashCode();
+
+        StringBuilder stringB = new StringBuilder();
+        stringB.append(dimension);
+        for (int i = 0; i < blocks.length; i++) {
+            if (i % dimension == 0) {
+                stringB.append("\n");
+            } else {
+                stringB.append(" ");
+            }
+            stringB.append(blocks[i]);
+        }
+        stringB.append("\n");
+        stringKey = stringB.toString();
     }
 
     private static int[][] getMatrix(int[] arr, int n) {
@@ -128,9 +142,11 @@ public class Board {
 
     @Override
     public boolean equals(Object y) {
-        if (y == null || y.getClass().hashCode() != currentClass) return false;
+        if (y == this) return true;
+        if (y == null) return false;
+        if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
-        return key == that.key;
+        return stringKey == that.stringKey;
     }
 
     // all neighboring boards
@@ -184,18 +200,7 @@ public class Board {
 
     // string representation of this board (in the output format specified below)
     public String toString() {
-        StringBuilder stringB = new StringBuilder();
-        stringB.append(dimension);
-        for (int i = 0; i < blocks.length; i++) {
-            if (i % dimension == 0) {
-                stringB.append("\n");
-            } else {
-                stringB.append(" ");
-            }
-            stringB.append(blocks[i]);
-        }
-        stringB.append("\n");
-        return stringB.toString();
+        return stringKey;
     }
 
     // unit tests (not graded)

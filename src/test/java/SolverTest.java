@@ -255,51 +255,51 @@ public class SolverTest {
         );
     }
 
-    @Test
-    public void testUnsolvable() {
-        int[][] blocks = {
-            {1, 2, 3},
-            {4, 6, 5},
-            {7, 8, 0}
-        };
+    // @Test
+    // public void testUnsolvable() {
+    //     int[][] blocks = {
+    //         {1, 2, 3},
+    //         {4, 6, 5},
+    //         {7, 8, 0}
+    //     };
         
-        Solver s = new Solver(new Board(blocks));
-        assertFalse(
-            s.isSolvable()
-        );
-    }
+    //     Solver s = new Solver(new Board(blocks));
+    //     assertFalse(
+    //         s.isSolvable()
+    //     );
+    // }
     
 
 
-    @Test
-    public void testUnsolvedBoardSolutions() {
-        int[][] blocks = {
-            {3, 2, 4, 8},
-            {1, 6, 0, 12},
-            {5, 10, 7, 11},
-            {9, 13, 14, 15}
-        };
-        Solver s = new Solver(new Board(blocks));
-        assertEquals(
-            s.moves(),
-            -1
-        );
-    }
+    // @Test
+    // public void testUnsolvedBoardSolutions() {
+    //     int[][] blocks = {
+    //         {3, 2, 4, 8},
+    //         {1, 6, 0, 12},
+    //         {5, 10, 7, 11},
+    //         {9, 13, 14, 15}
+    //     };
+    //     Solver s = new Solver(new Board(blocks));
+    //     assertEquals(
+    //         s.moves(),
+    //         -1
+    //     );
+    // }
 
-    @Test
-    public void testUnsolvedNullSolutions() {
-        int[][] blocks = {
-            {3, 2, 4, 8},
-            {1, 6, 0, 12},
-            {5, 10, 7, 11},
-            {9, 13, 14, 15}
-        };
-        Solver s = new Solver(new Board(blocks));
-        assertFalse(
-            s.isSolvable()
-        );
-        assertNull(
-            s.solution()
-        );
-    }
+    // @Test
+    // public void testUnsolvedNullSolutions() {
+    //     int[][] blocks = {
+    //         {3, 2, 4, 8},
+    //         {1, 6, 0, 12},
+    //         {5, 10, 7, 11},
+    //         {9, 13, 14, 15}
+    //     };
+    //     Solver s = new Solver(new Board(blocks));
+    //     assertFalse(
+    //         s.isSolvable()
+    //     );
+    //     assertNull(
+    //         s.solution()
+    //     );
+    // }
 }
