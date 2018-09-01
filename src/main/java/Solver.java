@@ -17,31 +17,43 @@ public class Solver {
             );
         }
         MinPQ<Node> bs = new MinPQ<>();
+        MinPQ<Node> bsT = new MinPQ<>();
         Node rootNode = new Node(initial, 0, null);
         Node rootNodeTwin = new Node(initial.twin(), 0, null);
-        bs.insert(rootNode);
-        bs.insert(rootNodeTwin);
         rootNodeTwin.isTwin = true;
-
-        ArrayList<Board> visited = new ArrayList<>();
+        bs.insert(rootNode);
+        bsT.insert(rootNodeTwin);
         Node current = null;
+        Board pred = null;
+        Board predT = null;
+        Board b;
+
         while (!bs.isEmpty()) {
             current = bs.delMin();
-            Board b = current.board;
-            if (visited.contains(b)) continue;
+            b = current.board;
             if (current.isSorted) break;
-            
-
             for (Board next: b.neighbors()) {
-                if (!visited.contains(next)) {
-                    bs.insert(new Node(
-                        next,
-                        current.moves + 1,
-                        current
-                    ));
-                }
+                if (pred != null && pred == next) continue;
+                bs.insert(new Node(
+                    next,
+                    current.moves + 1,
+                    current
+                ));
             }
-            visited.add(b);
+            pred = b;
+
+            current = bsT.delMin();
+            b = current.board;
+            if (current.isSorted) break;
+            for (Board next: b.neighbors()) {
+                if (predT != null && predT == next) continue;
+                bsT.insert(new Node(
+                    next,
+                    current.moves + 1,
+                    current
+                ));
+            }
+            predT = b;
         }
 
         goalBoard = current.isSorted ? current : null;
