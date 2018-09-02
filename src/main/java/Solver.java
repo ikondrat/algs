@@ -20,6 +20,9 @@ public class Solver {
         MinPQ<Node> bsT = new MinPQ<>();
         ArrayList<String> visited = new ArrayList<>();
         ArrayList<String> queued = new ArrayList<>();
+
+        ArrayList<String> visitedT = new ArrayList<>();
+        ArrayList<String> queuedT = new ArrayList<>();
         Node rootNode = new Node(initial, 0, null);
         Node rootNodeTwin = new Node(initial.twin(), 0, null);
         rootNodeTwin.isTwin = true;
@@ -39,7 +42,7 @@ public class Solver {
                 String kNext = next.toString();
                 if (pred != null && pred == next) continue;
                 if (visited.contains(kNext)) continue;
-                if (queued.contains(kNext)) continue;
+                //if (queued.contains(kNext)) continue;
                 bs.insert(new Node(
                     next,
                     current.moves + 1,
@@ -51,15 +54,21 @@ public class Solver {
 
             current = bsT.delMin();
             b = current.board;
+            String kT = b.toString();
             if (current.isSorted) break;
             for (Board next: b.neighbors()) {
+                String kNextT = next.toString();
+                if (visitedT.contains(kNextT)) continue;
+                if (queuedT.contains(kNextT)) continue;
                 if (predT != null && predT == next) continue;
                 bsT.insert(new Node(
                     next,
                     current.moves + 1,
                     current
                 ));
+                queuedT.add(kNextT);
             }
+            visited.add(kT);
             predT = b;
         }
 
