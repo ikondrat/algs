@@ -6,7 +6,6 @@ import java.util.Collections;
 
 public class Solver {
     private final boolean isSolved;
-    private final Node goalBoard;
     private int moves;
     private ArrayList<Board> solutionBoards;
 
@@ -34,7 +33,7 @@ public class Solver {
         while (!bs.isEmpty()) {
             current = bs.delMin();
             b = current.board;
-            if (current.isSorted) break;
+            if (b.isGoal()) break;
             String k = b.toString();
             for (Board next: b.neighbors()) {
                 String kNext = next.toString();
@@ -52,7 +51,7 @@ public class Solver {
             current = bsT.delMin();
             b = current.board;
             String kT = b.toString();
-            if (current.isSorted) break;
+            if (b.isGoal()) break;
             for (Board next: b.neighbors()) {
                 String kNextT = next.toString();
                 if (visitedT.contains(kNextT)) continue;
@@ -69,9 +68,7 @@ public class Solver {
             predT = kT;
         }
 
-        goalBoard = current.isSorted ? current : null;
         isSolved = !current.isTwin;
-
         if (!isSolved) {
             solutionBoards = null;
             moves = -1;

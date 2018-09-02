@@ -5,12 +5,10 @@ public class Board {
     private final int manhattanSum;
     private final int hammingCount;
     private final int dimension;
-    private final boolean isSorted;
     private final int key;
     private String stringKey;
     private int zeroIndex;
     private ArrayList<Board> nBoards;
-    private Board twinBoard;
     private final int[] blocks;
 
     // construct a board from an n-by-n array of blocks
@@ -45,7 +43,6 @@ public class Board {
         hammingCount = hc;
         manhattanSum = sum;
         key = Arrays.hashCode(blocks);
-        isSorted = hammingCount == 0;
     }
 
     private static int[][] getMatrix(int[] arr, int n) {
@@ -93,15 +90,12 @@ public class Board {
 
     // is this board the goal board?
     public boolean isGoal() {
-        return isSorted;
+        return hammingCount == 0;
     }
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin() {
-        if (twinBoard == null) {
-            twinBoard = getTwinBoard(zeroIndex, blocks, dimension);
-        }
-        return twinBoard;
+        return getTwinBoard(zeroIndex, blocks, dimension);
     }
 
     private static Board getTwinBoard(int zeroIndex, int[] m, int size) {
