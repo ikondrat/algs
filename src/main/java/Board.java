@@ -7,8 +7,7 @@ public class Board {
     private final int dimension;
     private final boolean isSorted;
     private final int key;
-    private final String stringKey;
-    private final int currentClass;
+    private String stringKey;
     private int zeroIndex;
     private ArrayList<Board> nBoards;
     private Board twinBoard;
@@ -47,20 +46,6 @@ public class Board {
         manhattanSum = sum;
         key = Arrays.hashCode(blocks);
         isSorted = hammingCount == 0;
-        currentClass = getClass().hashCode();
-
-        StringBuilder stringB = new StringBuilder();
-        stringB.append(dimension);
-        for (int i = 0; i < blocks.length; i++) {
-            if (i % dimension == 0) {
-                stringB.append("\n");
-            } else {
-                stringB.append(" ");
-            }
-            stringB.append(blocks[i]);
-        }
-        stringB.append("\n");
-        stringKey = stringB.toString();
     }
 
     private static int[][] getMatrix(int[] arr, int n) {
@@ -146,7 +131,7 @@ public class Board {
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
-        return stringKey == that.stringKey;
+        return key == that.key;
     }
 
     // all neighboring boards
@@ -200,6 +185,19 @@ public class Board {
 
     // string representation of this board (in the output format specified below)
     public String toString() {
+        if (stringKey != null) return stringKey;
+        StringBuilder stringB = new StringBuilder();
+        stringB.append(dimension);
+        for (int i = 0; i < blocks.length; i++) {
+            if (i % dimension == 0) {
+                stringB.append("\n");
+            } else {
+                stringB.append(" ");
+            }
+            stringB.append(blocks[i]);
+        }
+        stringB.append("\n");
+        stringKey = stringB.toString();
         return stringKey;
     }
 

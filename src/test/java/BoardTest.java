@@ -279,6 +279,22 @@ public class BoardTest {
     }
 
     @Test
+    public void equals_boards() {
+        int[][] blocks = {
+            {0, 2},
+            {1, 3}
+        };
+        int[][] blocks2 = {
+            {0, 2},
+            {1, 3}
+        };
+        Board b = new Board(blocks);
+        Board b2 = new Board(blocks2);
+        assertTrue(b.equals(b2));
+    }
+
+
+    @Test
     public void equals_DifferentBoards() {
         int[][] blocks = {
             {1, 0},

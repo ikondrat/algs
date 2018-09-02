@@ -19,8 +19,6 @@ public class Solver {
         MinPQ<Node> bs = new MinPQ<>();
         MinPQ<Node> bsT = new MinPQ<>();
         ArrayList<String> visited = new ArrayList<>();
-        ArrayList<String> queued = new ArrayList<>();
-
         ArrayList<String> visitedT = new ArrayList<>();
         ArrayList<String> queuedT = new ArrayList<>();
         Node rootNode = new Node(initial, 0, null);
@@ -29,8 +27,8 @@ public class Solver {
         bs.insert(rootNode);
         bsT.insert(rootNodeTwin);
         Node current = null;
-        Board pred = null;
-        Board predT = null;
+        String pred = null;
+        String predT = null;
         Board b;
 
         while (!bs.isEmpty()) {
@@ -40,9 +38,8 @@ public class Solver {
             String k = b.toString();
             for (Board next: b.neighbors()) {
                 String kNext = next.toString();
-                if (pred != null && pred == next) continue;
+                if (pred != null && pred == kNext) continue;
                 if (visited.contains(kNext)) continue;
-                //if (queued.contains(kNext)) continue;
                 bs.insert(new Node(
                     next,
                     current.moves + 1,
@@ -50,7 +47,7 @@ public class Solver {
                 ));
             }
             visited.add(k);
-            pred = b;
+            pred = k;
 
             current = bsT.delMin();
             b = current.board;
@@ -60,7 +57,7 @@ public class Solver {
                 String kNextT = next.toString();
                 if (visitedT.contains(kNextT)) continue;
                 if (queuedT.contains(kNextT)) continue;
-                if (predT != null && predT == next) continue;
+                if (predT != null && predT == kNextT) continue;
                 bsT.insert(new Node(
                     next,
                     current.moves + 1,
@@ -69,7 +66,7 @@ public class Solver {
                 queuedT.add(kNextT);
             }
             visited.add(kT);
-            predT = b;
+            predT = kT;
         }
 
         goalBoard = current.isSorted ? current : null;
