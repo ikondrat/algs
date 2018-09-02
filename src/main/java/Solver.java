@@ -18,17 +18,16 @@ public class Solver {
         MinPQ<Node> bs = new MinPQ<>();
         MinPQ<Node> bsT = new MinPQ<>();
         ArrayList<String> visited = new ArrayList<>();
-        ArrayList<String> visitedT = new ArrayList<>();
         ArrayList<String> queuedT = new ArrayList<>();
         Node rootNode = new Node(initial, 0, null);
         Node rootNodeTwin = new Node(initial.twin(), 0, null);
-        rootNodeTwin.isTwin = true;
         bs.insert(rootNode);
         bsT.insert(rootNodeTwin);
         Node current = null;
         String pred = null;
         String predT = null;
         Board b;
+        boolean isUnsolvable = false;
 
         while (!bs.isEmpty()) {
             current = bs.delMin();
@@ -51,10 +50,12 @@ public class Solver {
             current = bsT.delMin();
             b = current.board;
             String kT = b.toString();
-            if (b.isGoal()) break;
+            if (b.isGoal()) {
+                isUnsolvable = true;
+                break;
+            }
             for (Board next: b.neighbors()) {
                 String kNextT = next.toString();
-                if (visitedT.contains(kNextT)) continue;
                 if (queuedT.contains(kNextT)) continue;
                 if (predT != null && predT == kNextT) continue;
                 bsT.insert(new Node(
@@ -64,11 +65,10 @@ public class Solver {
                 ));
                 queuedT.add(kNextT);
             }
-            visited.add(kT);
             predT = kT;
         }
 
-        isSolved = !current.isTwin;
+        isSolved = !isUnsolvable;
         if (!isSolved) {
             solutionBoards = null;
             moves = -1;
@@ -84,21 +84,16 @@ public class Solver {
     }
 
     private static class Node implements Comparable<Node> {
-        public boolean isTwin;
         private final int moves;
         private final Node prev;
         private final Board board;
         private final int priority;
-        private final boolean isSorted;
 
         public Node(Board b, int m, Node p) {
             moves = m;
             prev = p;
             board = b;
-            int mh = b.manhattan();
-            priority = mh + m;
-            isSorted = mh == 0;
-            isTwin = p != null ? p.isTwin : false;
+            priority = b.manhattan() + m;
         }
 
         @Override
