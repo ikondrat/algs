@@ -262,11 +262,14 @@ public class SolverTest {
             {4, 6, 5},
             {7, 8, 0}
         };
+        
         Solver s = new Solver(new Board(blocks));
         assertFalse(
             s.isSolvable()
         );
     }
+    
+
 
     @Test
     public void testUnsolvedBoardSolutions() {
@@ -278,8 +281,8 @@ public class SolverTest {
         };
         Solver s = new Solver(new Board(blocks));
         assertEquals(
-            -1,
-            s.moves()
+            s.moves(),
+            -1
         );
     }
 

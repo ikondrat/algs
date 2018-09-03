@@ -71,17 +71,6 @@
         },
         {
             "type": "java",
-            "name": "PuzzleChecker",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "projectName": "princeton-algorithms",
-            "mainClass": "PuzzleChecker",
-            "args": "etc/8puzzle/puzzle3x3-05.txt"
-        },
-        {
-            "type": "java",
             "name": "Debug (Attach)",
             "request": "attach",
             "hostName": "localhost",

@@ -16,37 +16,58 @@ public class Solver {
             );
         }
         MinPQ<Node> bs = new MinPQ<>();
+        MinPQ<Node> bsT = new MinPQ<>();
+        ArrayList<String> visited = new ArrayList<>();
+        ArrayList<String> queuedT = new ArrayList<>();
         Node rootNode = new Node(initial, 0, null);
         Node rootNodeTwin = new Node(initial.twin(), 0, null);
-        rootNodeTwin.isTwin = true;
         bs.insert(rootNode);
-        bs.insert(rootNodeTwin);
+        bsT.insert(rootNodeTwin);
         Node current = null;
-        Board pred = null;
-        Board predTwin = null;
+        String pred = null;
+        String predT = null;
         Board b;
         boolean isUnsolvable = false;
+
         while (!bs.isEmpty()) {
             current = bs.delMin();
             b = current.board;
             if (b.isGoal()) break;
+            String k = b.toString();
             for (Board next: b.neighbors()) {
-                if (!current.isTwin && pred != null && pred == next) continue;
-                if (current.isTwin && predTwin != null && predTwin == next) continue;
+                String kNext = next.toString();
+                if (pred != null && pred == kNext) continue;
+                if (visited.contains(kNext)) continue;
                 bs.insert(new Node(
                     next,
                     current.moves + 1,
                     current
                 ));
             }
-            if (current.isTwin) {
-                predTwin = b;
-            } else {
-                pred = b;
+            visited.add(k);
+            pred = k;
+
+            current = bsT.delMin();
+            b = current.board;
+            String kT = b.toString();
+            if (b.isGoal()) {
+                isUnsolvable = true;
+                break;
             }
+            for (Board next: b.neighbors()) {
+                String kNextT = next.toString();
+                if (queuedT.contains(kNextT)) continue;
+                if (predT != null && predT == kNextT) continue;
+                bsT.insert(new Node(
+                    next,
+                    current.moves + 1,
+                    current
+                ));
+                queuedT.add(kNextT);
+            }
+            predT = kT;
         }
 
-        isUnsolvable = current.isTwin;
         isSolved = !isUnsolvable;
         if (!isSolved) {
             solutionBoards = null;
@@ -63,7 +84,6 @@ public class Solver {
     }
 
     private static class Node implements Comparable<Node> {
-        public boolean isTwin;
         private final int moves;
         private final Node prev;
         private final Board board;
@@ -74,7 +94,6 @@ public class Solver {
             prev = p;
             board = b;
             priority = b.manhattan() + m;
-            isTwin = p == null ? false : p.isTwin;
         }
 
         @Override
