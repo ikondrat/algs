@@ -32,17 +32,20 @@ public class Board {
 
         int sum = 0;
         int hc = 0;
+        int resultHash = 1;
         for (int i = 0; i < copy.length; i++) {
             int currentValue = blocks[i];
+            resultHash = 31 * resultHash + blocks[i];
             if (copy[i] != currentValue && currentValue != 0) {
                 int targetIndex = biSearch(copy, 0, copy.length - 1, currentValue);
                 sum += getManhattanDistance(i, targetIndex, dimension);
                 hc++;
             }
         }
+        copy = null;
         hammingCount = hc;
         manhattanSum = sum;
-        key = Arrays.hashCode(blocks);
+        key = resultHash;
     }
 
     private static int[][] getMatrix(int[] arr, int n) {
