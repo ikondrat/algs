@@ -17,55 +17,49 @@ public class Solver {
         }
         MinPQ<Node> bs = new MinPQ<>();
         MinPQ<Node> bsT = new MinPQ<>();
-        ArrayList<String> visited = new ArrayList<>();
-        ArrayList<String> queuedT = new ArrayList<>();
+        ArrayList<Board> visited = new ArrayList<>();
+        ArrayList<Board> queuedT = new ArrayList<>();
         Node rootNode = new Node(initial, 0, null);
         Node rootNodeTwin = new Node(initial.twin(), 0, null);
         bs.insert(rootNode);
         bsT.insert(rootNodeTwin);
         Node current = null;
-        String pred = null;
-        String predT = null;
+        Board pred = null;
+        Board predT = null;
         Board b;
         boolean isUnsolvable = false;
-
         while (!bs.isEmpty()) {
             current = bs.delMin();
             b = current.board;
             if (b.isGoal()) break;
-            String k = b.toString();
             for (Board next: b.neighbors()) {
-                String kNext = next.toString();
-                if (pred != null && pred == kNext) continue;
-                if (visited.contains(kNext)) continue;
+                if (pred != null && next.equals(pred)) continue;
+                if (visited.contains(next)) continue;
                 bs.insert(new Node(
                     next,
                     current.moves + 1,
                     current
                 ));
             }
-            visited.add(k);
-            pred = k;
-
+            visited.add(b);
+            pred = b;
             current = bsT.delMin();
             b = current.board;
-            String kT = b.toString();
             if (b.isGoal()) {
                 isUnsolvable = true;
                 break;
             }
             for (Board next: b.neighbors()) {
-                String kNextT = next.toString();
-                if (queuedT.contains(kNextT)) continue;
-                if (predT != null && predT == kNextT) continue;
+                if (queuedT.contains(next)) continue;
+                if (predT != null && next.equals(predT)) continue;
                 bsT.insert(new Node(
                     next,
                     current.moves + 1,
                     current
                 ));
-                queuedT.add(kNextT);
+                queuedT.add(next);
             }
-            predT = kT;
+            predT = b;
         }
 
         isSolved = !isUnsolvable;

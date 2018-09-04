@@ -6,7 +6,6 @@ public class Board {
     private final int hammingCount;
     private final int dimension;
     private final int key;
-    private String stringKey;
     private int zeroIndex;
     private ArrayList<Board> nBoards;
     private final int[] blocks;
@@ -35,7 +34,7 @@ public class Board {
         int resultHash = 1;
         for (int i = 0; i < copy.length; i++) {
             int currentValue = blocks[i];
-            resultHash = 31 * resultHash + blocks[i];
+            resultHash = 32 * resultHash + blocks[i];
             if (copy[i] != currentValue && currentValue != 0) {
                 int targetIndex = biSearch(copy, 0, copy.length - 1, currentValue);
                 sum += getManhattanDistance(i, targetIndex, dimension);
@@ -182,7 +181,6 @@ public class Board {
 
     // string representation of this board (in the output format specified below)
     public String toString() {
-        if (stringKey != null) return stringKey;
         StringBuilder stringB = new StringBuilder();
         stringB.append(dimension);
         for (int i = 0; i < blocks.length; i++) {
@@ -194,8 +192,7 @@ public class Board {
             stringB.append(blocks[i]);
         }
         stringB.append("\n");
-        stringKey = stringB.toString();
-        return stringKey;
+        return stringB.toString();
     }
 
     // unit tests (not graded)
