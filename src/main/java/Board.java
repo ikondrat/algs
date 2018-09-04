@@ -123,6 +123,10 @@ public class Board {
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
+        if (this.dimension != that.dimension) return false;
+        if (this.zeroIndex != that.zeroIndex) return false;
+        if (this.manhattanSum != that.manhattanSum) return false;
+        if (this.hammingCount != that.hammingCount) return false;
         return Arrays.equals(blocks, that.blocks);
     }
 
