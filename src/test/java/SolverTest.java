@@ -125,6 +125,22 @@ public class SolverTest {
         );
     }
 
+    // @Test
+    // public void puzzle_38(){
+    //     int[][] blocks = {
+    //         {13, 1, 5, 4},
+    //         {2, 3, 6, 8},
+    //         {7, 10, 0, 9},
+    //         {11, 14, 15, 12}
+    //     };
+        
+    //     Solver s = new Solver(new Board(blocks));
+    //     assertEquals(
+    //         38,
+    //         s.moves()
+    //     );
+    // }
+
     @Test
     public void test20Moves() {
         int[][] blocks = {
@@ -218,6 +234,21 @@ public class SolverTest {
         Solver s = new Solver(new Board(blocks));
         assertEquals(
             11,
+            s.moves()
+        );
+    }
+
+    @Test
+    public void testPuzzle28() {
+        int[][] blocks = {
+            {7, 8, 5},
+            {4, 0, 2},
+            {3, 6, 1}
+        };
+
+        Solver s = new Solver(new Board(blocks));
+        assertEquals(
+            28,
             s.moves()
         );
     }

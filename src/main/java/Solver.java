@@ -1,6 +1,8 @@
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
+import javafx.scene.layout.Border;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -17,15 +19,13 @@ public class Solver {
         }
         MinPQ<Node> bs = new MinPQ<>();
         MinPQ<Node> bsT = new MinPQ<>();
-        ArrayList<Board> visited = new ArrayList<>();
-        ArrayList<Board> queuedT = new ArrayList<>();
+        ArrayList<Node> visited = new ArrayList<>();
+        ArrayList<Node> queuedT = new ArrayList<>();
         Node rootNode = new Node(initial, 0, null);
         Node rootNodeTwin = new Node(initial.twin(), 0, null);
         bs.insert(rootNode);
         bsT.insert(rootNodeTwin);
         Node current = null;
-        Board pred = null;
-        Board predT = null;
         Board b;
         boolean isUnsolvable = false;
         while (!bs.isEmpty()) {
@@ -33,16 +33,15 @@ public class Solver {
             b = current.board;
             if (b.isGoal()) break;
             for (Board next: b.neighbors()) {
-                if (pred != null && next.equals(pred)) continue;
-                if (visited.contains(next)) continue;
-                bs.insert(new Node(
+                Node n = new Node(
                     next,
                     current.moves + 1,
                     current
-                ));
+                );
+                if (indexOf(visited, n) != -1) continue;
+                bs.insert(n);
             }
-            visited.add(b);
-            pred = b;
+            visited.add(current);
             current = bsT.delMin();
             b = current.board;
             if (b.isGoal()) {
@@ -50,16 +49,15 @@ public class Solver {
                 break;
             }
             for (Board next: b.neighbors()) {
-                if (queuedT.contains(next)) continue;
-                if (predT != null && next.equals(predT)) continue;
-                bsT.insert(new Node(
+                Node n = new Node(
                     next,
                     current.moves + 1,
                     current
-                ));
-                queuedT.add(next);
+                );
+                if (indexOf(queuedT, n) != -1) continue;
+                bsT.insert(n);
             }
-            predT = b;
+            queuedT.add(current);
         }
 
         isSolved = !isUnsolvable;
@@ -78,6 +76,7 @@ public class Solver {
     }
 
     private static class Node implements Comparable<Node> {
+        public final int manhattan;
         private final int moves;
         private final Node prev;
         private final Board board;
@@ -88,6 +87,7 @@ public class Solver {
             prev = p;
             board = b;
             priority = b.manhattan() + m;
+            manhattan = b.manhattan();
         }
 
         @Override
@@ -101,6 +101,16 @@ public class Solver {
 
     private static boolean isNull(Object x) {
         return x == null;
+    }
+
+    private static int indexOf(ArrayList<Node> nodes, Node node) {
+        for (int i = nodes.size() - 1; i >= 0; i--) {
+            if (node.board.equals(nodes.get(i).board)) {
+                return i;
+            }
+            if (nodes.get(i).manhattan > node.manhattan) return -1;
+        }
+        return -1;
     }
 
     // is the initial board solvable?
