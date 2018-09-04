@@ -5,7 +5,6 @@ public class Board {
     private final int manhattanSum;
     private final int hammingCount;
     private final int dimension;
-    private final int key;
     private int zeroIndex;
     private ArrayList<Board> nBoards;
     private final int[] blocks;
@@ -31,10 +30,8 @@ public class Board {
 
         int sum = 0;
         int hc = 0;
-        int resultHash = 1;
         for (int i = 0; i < copy.length; i++) {
             int currentValue = blocks[i];
-            resultHash = 32 * resultHash + blocks[i];
             if (copy[i] != currentValue && currentValue != 0) {
                 int targetIndex = biSearch(copy, 0, copy.length - 1, currentValue);
                 sum += getManhattanDistance(i, targetIndex, dimension);
@@ -44,7 +41,6 @@ public class Board {
         copy = null;
         hammingCount = hc;
         manhattanSum = sum;
-        key = resultHash;
     }
 
     private static int[][] getMatrix(int[] arr, int n) {
@@ -127,7 +123,7 @@ public class Board {
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
-        return key == that.key;
+        return Arrays.equals(blocks, that.blocks);
     }
 
     // all neighboring boards
