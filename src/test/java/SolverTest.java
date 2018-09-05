@@ -1,8 +1,5 @@
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class SolverTest {
     @Test
@@ -172,6 +169,21 @@ public class SolverTest {
     }
 
     @Test
+    public void testPuzzle30() {
+        int[][] blocks = {
+            {8, 4, 7},
+            {1, 5, 6},
+            {3, 2, 0}
+        };
+        
+        Solver s = new Solver(new Board(blocks));
+        assertEquals(
+            30,
+            s.moves()
+        );
+    }
+
+    @Test
     public void test25Moves() {
         int[][] blocks = {
             {2, 5, 1, 3},
@@ -205,7 +217,7 @@ public class SolverTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullException() {
-        Solver s = new Solver(null);
+        new Solver(null);
     }
 
     @Test
@@ -263,8 +275,10 @@ public class SolverTest {
         
         Solver s = new Solver(new Board(blocks));
         int n = 0;
-        for(Board b: s.solution()) {
-            n++;
+        for (Board b: s.solution()) {
+            if (b != null) {
+                n++;
+            }
         }
         assertEquals(
             5,

@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 
 public class BruteCollinearPointsTest {
     @Test(expected = IllegalArgumentException.class) public void testIllegalArgumentException() {
-        BruteCollinearPoints bp = new BruteCollinearPoints(null);
+        new BruteCollinearPoints(null);
     }
 
     @Test(expected = IllegalArgumentException.class) 
@@ -16,7 +16,7 @@ public class BruteCollinearPointsTest {
         Point[] points = new Point[2];
         points[0] = new Point(10, 20);
         points[1] = new Point(10, 20);
-        BruteCollinearPoints bp = new BruteCollinearPoints(null);
+        new BruteCollinearPoints(null);
     }
 
     @Test(expected = IllegalArgumentException.class) public void testNullPoint() {
@@ -25,7 +25,7 @@ public class BruteCollinearPointsTest {
             new Point(10, 25)
         };
         points[0] = null;
-        BruteCollinearPoints bp = new BruteCollinearPoints(points);
+        new BruteCollinearPoints(points);
     }
 
     @Test(expected = IllegalArgumentException.class) public void testDuplicatedPoint() {
@@ -33,7 +33,7 @@ public class BruteCollinearPointsTest {
             new Point(10, 20),
             new Point(10, 20)
         };
-        BruteCollinearPoints bp = new BruteCollinearPoints(points);
+        new BruteCollinearPoints(points);
     }
 
     @Test 

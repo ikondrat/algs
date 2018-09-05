@@ -1,5 +1,4 @@
 import org.junit.Test;
-import java.util.Iterator;
 import static org.junit.Assert.*;
 
 public class BoardTest {
@@ -129,7 +128,7 @@ public class BoardTest {
     // }
 
     @Test 
-    public void TestHammingDistance() {
+    public void testHammingDistance() {
         int[][] blocks = {
             new int[]{8, 1, 3},
             new int[]{4, 0, 2},
@@ -144,7 +143,7 @@ public class BoardTest {
 
    
     @Test
-    public void TestManhattanDistance() {
+    public void testManhattanDistance() {
         int[][] blocks = {
             {8, 1, 3},
             {4, 0, 2},
@@ -204,7 +203,7 @@ public class BoardTest {
     }
 
     @Test
-    public void TestDimensions() {
+    public void testDimensions() {
         int[][] blocks = {
             new int[]{8, 1, 3},
             new int[]{4, 0, 2},
@@ -219,7 +218,7 @@ public class BoardTest {
     }
 
     @Test
-    public void TestNeughborBoards() {
+    public void testNeughborBoards() {
         int[][] blocks = {
             new int[]{8, 1, 3},
             new int[]{4, 0, 2},
@@ -230,7 +229,9 @@ public class BoardTest {
         int index = 0;
         
         for (Board board: boards) {
-            index += 1;
+            if (board != null) {
+                index += 1;
+            }
         }
         assertEquals(
             index,
@@ -239,7 +240,7 @@ public class BoardTest {
     }
 
     @Test
-    public void TestTwin() {
+    public void testTwin() {
         int[][] blocks = {
             {1, 0},
             {2, 3}
@@ -249,7 +250,7 @@ public class BoardTest {
         assertFalse(b.equals(t));
     }
     @Test
-    public void equals_nullTest() {
+    public void equalsNullTest() {
         int[][] blocks = {
             {1, 0},
             {2, 3}
@@ -259,7 +260,7 @@ public class BoardTest {
     }
 
     @Test
-    public void equals_StringTest() {
+    public void equalsStringTest() {
         int[][] blocks = {
             {1, 0},
             {2, 3}
@@ -269,7 +270,7 @@ public class BoardTest {
     }
 
     @Test
-    public void equals_Reflexive() {
+    public void equalsReflexive() {
         int[][] blocks = {
             {1, 0},
             {2, 3}
@@ -279,7 +280,7 @@ public class BoardTest {
     }
 
     @Test
-    public void equals_boards() {
+    public void equalsBoards() {
         int[][] blocks = {
             {0, 2},
             {1, 3}
@@ -295,7 +296,7 @@ public class BoardTest {
 
 
     @Test
-    public void equals_DifferentBoards() {
+    public void equalsDifferentBoards() {
         int[][] blocks = {
             {1, 0},
             {2, 3}
@@ -311,7 +312,7 @@ public class BoardTest {
         assertFalse(b.equals(b2));
     }
     @Test
-    public void toString_isCorrect() {
+    public void toStringIsCorrect() {
         int[][] blocks = {
             {1, 0},
             {2, 3}
@@ -324,7 +325,7 @@ public class BoardTest {
     }
 
     @Test
-    public void neighbors_correctness() {
+    public void neighborsCorrectness() {
         int[][] blocks = {
             {1, 0, 2},
             {4, 6, 3},

@@ -2,9 +2,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Board {
-    private final int manhattanSum;
-    private final int hammingCount;
+    private int manhattanSum = 0;
+    private int hammingCount = 0;
     private final int dimension;
+    private int hashCode;
     private int zeroIndex;
     private ArrayList<Board> nBoards;
     private final int[] blocks;
@@ -15,8 +16,10 @@ public class Board {
         blocks = new int[dimension*dimension];
 
         int k = 0;
-        for (int i = 0; i < dimension; i++) {
-            for (int j = 0; j < dimension; j++) {
+        hashCode = 1;
+        for (short i = 0; i < dimension; i++) {
+            for (short j = 0; j < dimension; j++) {
+                hashCode = 31 * hashCode + arr[i][j];
                 if (arr[i][j] == 0) {
                     zeroIndex = k;
                 }
@@ -28,19 +31,14 @@ public class Board {
         exch(copy, zeroIndex, copy.length - 1);
         Arrays.sort(copy, 0, blocks.length - 1);
 
-        int sum = 0;
-        int hc = 0;
-        for (int i = 0; i < copy.length; i++) {
+        for (short i = 0; i < copy.length; i++) {
             int currentValue = blocks[i];
             if (copy[i] != currentValue && currentValue != 0) {
                 int targetIndex = biSearch(copy, 0, copy.length - 1, currentValue);
-                sum += getManhattanDistance(i, targetIndex, dimension);
-                hc++;
+                manhattanSum += getManhattanDistance(i, targetIndex, dimension);
+                hammingCount++;
             }
         }
-        copy = null;
-        hammingCount = hc;
-        manhattanSum = sum;
     }
 
     private static int[][] getMatrix(int[] arr, int n) {
@@ -123,11 +121,7 @@ public class Board {
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
-        if (this.dimension != that.dimension) return false;
-        if (this.zeroIndex != that.zeroIndex) return false;
-        if (this.manhattanSum != that.manhattanSum) return false;
-        if (this.hammingCount != that.hammingCount) return false;
-        return Arrays.equals(blocks, that.blocks);
+        return this.hashCode == that.hashCode;
     }
 
     // all neighboring boards
@@ -193,9 +187,5 @@ public class Board {
         }
         stringB.append("\n");
         return stringB.toString();
-    }
-
-    // unit tests (not graded)
-    public static void main(String[] args) {
     }
 }

@@ -2,11 +2,10 @@ import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Stack;
-import java.util.ArrayList;
 
 public class Solver {
-    private boolean isSolved;
-    private Node goalNode;
+    private final boolean isSolved;
+    private final Node goalNode;
 
     public Solver(Board initial) {
         if (isNull(initial)) {
@@ -21,12 +20,13 @@ public class Solver {
         while (current == null || !current.isDone) {
             current = x.delMin();
             for (Board next: current.board.neighbors()) {
-                if (pred != null && pred.board.equals(next)) continue;
-                x.insert(new Node(
-                    next,
-                    current.moves + 1,
-                    current
-                ));
+                if (pred == null || pred.board.equals(next)) {
+                    x.insert(new Node(
+                        next,
+                        current.moves + 1,
+                        current
+                    ));
+                }
             }
             pred = current;
         }
@@ -36,7 +36,6 @@ public class Solver {
     }
 
     private static class Node implements Comparable<Node> {
-        public final int manhattan;
         public final boolean isDone;
         private final int moves;
         private final Node prev;
@@ -49,11 +48,11 @@ public class Solver {
             prev = p;
             board = b;
             priority = b.manhattan() + m;
-            manhattan = b.manhattan();
             isDone = b.isGoal();
         }
 
-        public boolean isEqual(Board b) {
+        @Override
+        public boolean equals(Object b) {
             return this.board.equals(b);
         }
 
@@ -68,16 +67,6 @@ public class Solver {
 
     private static boolean isNull(Object x) {
         return x == null;
-    }
-
-    private static int indexOf(ArrayList<Node> nodes, Node node) {
-        for (int i = nodes.size() - 1; i >= 0; i--) {
-            if (node.board.equals(nodes.get(i).board)) {
-                return i;
-            }
-            if (nodes.get(i).manhattan > node.manhattan) return -1;
-        }
-        return -1;
     }
 
     // is the initial board solvable?
