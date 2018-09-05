@@ -1,15 +1,12 @@
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
-import javafx.scene.layout.Border;
-
+import edu.princeton.cs.algs4.Stack;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Solver {
-    private final boolean isSolved;
-    private int moves;
-    private ArrayList<Board> solutionBoards;
+    private boolean isSolved;
+    private Node goalNode;
 
     public Solver(Board initial) {
         if (isNull(initial)) {
@@ -17,70 +14,35 @@ public class Solver {
                 "The board is expected to be passed into the constructor"
             );
         }
-        MinPQ<Node> bs = new MinPQ<>();
-        MinPQ<Node> bsT = new MinPQ<>();
-        ArrayList<Node> visited = new ArrayList<>();
-        ArrayList<Node> queuedT = new ArrayList<>();
-        Node rootNode = new Node(initial, 0, null);
-        Node rootNodeTwin = new Node(initial.twin(), 0, null);
-        bs.insert(rootNode);
-        bsT.insert(rootNodeTwin);
+        MinPQ<Node> x = new MinPQ<>();
         Node current = null;
-        Board b;
-        boolean isUnsolvable = false;
-        while (!bs.isEmpty()) {
-            current = bs.delMin();
-            b = current.board;
-            if (b.isGoal()) break;
-            for (Board next: b.neighbors()) {
-                Node n = new Node(
+        Node pred = null;
+        x.insert(new Node(initial, 0, null));
+        while (current == null || !current.isDone) {
+            current = x.delMin();
+            for (Board next: current.board.neighbors()) {
+                if (pred != null && pred.board.equals(next)) continue;
+                x.insert(new Node(
                     next,
                     current.moves + 1,
                     current
-                );
-                if (indexOf(visited, n) != -1) continue;
-                bs.insert(n);
+                ));
             }
-            visited.add(current);
-            current = bsT.delMin();
-            b = current.board;
-            if (b.isGoal()) {
-                isUnsolvable = true;
-                break;
-            }
-            for (Board next: b.neighbors()) {
-                Node n = new Node(
-                    next,
-                    current.moves + 1,
-                    current
-                );
-                if (indexOf(queuedT, n) != -1) continue;
-                bsT.insert(n);
-            }
-            queuedT.add(current);
+            pred = current;
         }
 
-        isSolved = !isUnsolvable;
-        if (!isSolved) {
-            solutionBoards = null;
-            moves = -1;
-            return;
-        }
-        moves = current.moves;
-        solutionBoards = new ArrayList<>();
-        while (current != null) {
-            solutionBoards.add(current.board);
-            current = current.prev;
-        }
-        Collections.reverse(solutionBoards);
+        goalNode = current;
+        isSolved = true;
     }
 
     private static class Node implements Comparable<Node> {
         public final int manhattan;
+        public final boolean isDone;
         private final int moves;
         private final Node prev;
         private final Board board;
         private final int priority;
+        
 
         public Node(Board b, int m, Node p) {
             moves = m;
@@ -88,6 +50,11 @@ public class Solver {
             board = b;
             priority = b.manhattan() + m;
             manhattan = b.manhattan();
+            isDone = b.isGoal();
+        }
+
+        public boolean isEqual(Board b) {
+            return this.board.equals(b);
         }
 
         @Override
@@ -120,10 +87,16 @@ public class Solver {
 
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
-        return moves;
+        return goalNode.moves;
     }
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
+        Stack<Board> solutionBoards = new Stack<>();
+        Node current = goalNode;
+        while (current != null) {
+            solutionBoards.push(current.board);
+            current = current.prev;
+        }
         return solutionBoards;
     }
 
