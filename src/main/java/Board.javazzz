@@ -7,7 +7,6 @@ public class Board {
     private int zeroIndex;
     private ArrayList<Board> nBoards;
     private final int[] blocks;
-    private int hash;
 
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
@@ -17,16 +16,12 @@ public class Board {
 
         int k = 0;
         int[] sorted = new int[n];
-        hash = 1;
-        
-
         for (short i = 0; i < dimension; i++) {
             for (short j = 0; j < dimension; j++) {
                 if (arr[i][j] == 0) {
                     zeroIndex = k;
                 }
                 int v = arr[i][j];
-                hash = 31*hash + v;
                 blocks[k] = v;
                 sorted[k] = v;
                 int m = k;
@@ -128,7 +123,11 @@ public class Board {
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
-        return that.hash == this.hash;
+        if (this.dimension != that.dimension) return false;
+        for (int i = 0; i < this.blocks.length; i++) {
+            if (this.blocks[i] != that.blocks[i]) return false;
+        }
+        return true;
     }
 
     // all neighboring boards
@@ -140,9 +139,9 @@ public class Board {
     }
 
     private static void exch(int[] arr, int x, int y) {
-        arr[x] = arr[x] ^ arr[y];
-        arr[y] = arr[x] ^ arr[y];
-        arr[x] = arr[x] ^ arr[y];
+        int v = arr[x];
+        arr[x] = arr[y];
+        arr[y] = v;
     }
 
     private static ArrayList<Board> findNeighbors(int zeroIndex, int[] blocks, int n) {
