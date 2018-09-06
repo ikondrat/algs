@@ -1,11 +1,9 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Board {
     private int manhattanSum = 0;
     private int hammingCount = 0;
     private final int dimension;
-    private int hashCode;
     private int zeroIndex;
     private ArrayList<Board> nBoards;
     private final int[] blocks;
@@ -13,28 +11,32 @@ public class Board {
     // construct a board from an n-by-n array of blocks
     public Board(int[][] arr) {
         dimension = arr.length;
-        blocks = new int[dimension*dimension];
+        int n = dimension*dimension;
+        blocks = new int[n];
 
         int k = 0;
-        hashCode = 1;
+        int[] sorted = new int[n];
         for (short i = 0; i < dimension; i++) {
             for (short j = 0; j < dimension; j++) {
-                hashCode = 31 * hashCode + arr[i][j];
                 if (arr[i][j] == 0) {
                     zeroIndex = k;
                 }
-                blocks[k++] = arr[i][j];
+                int v = arr[i][j];
+                blocks[k] = v;
+                sorted[k] = v;
+                int m = k;
+                while (m > 0 && (sorted[m - 1] == 0 || sorted[m] != 0 && sorted[m] < sorted[m - 1])) {
+                    exch(sorted, m, m - 1);
+                    m--;
+                }
+                k++;
             }
         }
 
-        int[] copy = Arrays.copyOf(blocks, blocks.length);
-        exch(copy, zeroIndex, copy.length - 1);
-        Arrays.sort(copy, 0, blocks.length - 1);
-
-        for (short i = 0; i < copy.length; i++) {
+        for (short i = 0; i < sorted.length; i++) {
             int currentValue = blocks[i];
-            if (copy[i] != currentValue && currentValue != 0) {
-                int targetIndex = biSearch(copy, 0, copy.length - 1, currentValue);
+            if (sorted[i] != currentValue && currentValue != 0) {
+                int targetIndex = biSearch(sorted, 0, sorted.length - 1, currentValue);
                 manhattanSum += getManhattanDistance(i, targetIndex, dimension);
                 hammingCount++;
             }
@@ -121,7 +123,11 @@ public class Board {
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
-        return this.hashCode == that.hashCode;
+        if (this.dimension != that.dimension) return false;
+        for (int i = 0; i < this.blocks.length; i++) {
+            if (this.blocks[i] != that.blocks[i]) return false;
+        }
+        return true;
     }
 
     // all neighboring boards
@@ -133,9 +139,9 @@ public class Board {
     }
 
     private static void exch(int[] arr, int x, int y) {
-        int v = arr[x];
-        arr[x] = arr[y];
-        arr[y] = v;
+        arr[x] = arr[x] ^ arr[y];
+        arr[y] = arr[x] ^ arr[y];
+        arr[x] = arr[x] ^ arr[y];
     }
 
     private static ArrayList<Board> findNeighbors(int zeroIndex, int[] blocks, int n) {
