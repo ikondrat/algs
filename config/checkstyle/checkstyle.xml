@@ -6,10 +6,6 @@
     <!-- TODO: StdRandom.uniform(1): always returns 0. Did you mean StdRandom.uniform(0.0, 1.0)?  -->
 
 <module name="Checker">
-    <module name="SuppressionCommentFilter">
-        <property name="offCommentFormat" value="ch:disable"/>
-        <property name="onCommentFormat" value="ch:enable"/>
-    </module>
     <!-- directory where the .java file lives -->
     <!-- the property "basedir" should be passed as a -D command-line option to Java -->
     <property name="basedir" value="/Users/kondrat/Projects/princeton-algorithms/src"/>
