@@ -5,7 +5,6 @@ public class Board {
     private int hammingCount = 0;
     private final int dimension;
     private int zeroIndex;
-    private ArrayList<Board> nBoards;
     private final int[] blocks;
     private int hash;
 
@@ -18,7 +17,6 @@ public class Board {
         int k = 0;
         int[] sorted = new int[n];
         hash = 1;
-        
 
         for (short i = 0; i < dimension; i++) {
             for (short j = 0; j < dimension; j++) {
@@ -133,10 +131,7 @@ public class Board {
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        if (nBoards == null) {
-            nBoards = findNeighbors(zeroIndex, blocks, dimension);
-        }
-        return nBoards;
+        return findNeighbors(zeroIndex, blocks, dimension);
     }
 
     private static void exch(int[] arr, int x, int y) {

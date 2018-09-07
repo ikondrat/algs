@@ -1,7 +1,7 @@
 import edu.princeton.cs.algs4.MinPQ;
-
-import java.util.ArrayList;
 import edu.princeton.cs.algs4.In;
+import java.util.ArrayList;
+import java.util.Collections;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Stack;
 
@@ -15,69 +15,85 @@ public class Solver {
                 "The board is expected to be passed into the constructor"
             );
         }
-        MinPQ<Node> x = new MinPQ<>();
-        ArrayList<Board> nodes = new ArrayList<>();
-        ArrayList<Integer> moves = new ArrayList<>();
+        MinPQ<Node> pq = new MinPQ<>();
+        ArrayList<Node> nodes = new ArrayList<>();
         Node current = null;
         Node pred = null;
         Node initialNode = new Node(initial, 0, null);
-        x.insert(initialNode);
-        nodes.add(initialNode.board);
-        moves.add(0);
+        pq.insert(initialNode);
         while (current == null || !current.isDone) {
-            current = x.delMin();
+            current = pq.delMin();
+            if (nodes.contains(current.board)) continue;
             for (Board next: current.board.neighbors()) {
-                if (pred != null && next.equals(pred.board)) continue;
-                if (Math.abs(current.board.manhattan() - next.manhattan()) != 1) continue;
-                if (current.board.manhattan() == next.manhattan()) continue;
-                int indx = nodes.indexOf(next);
-                int m = current.moves + 1;
-                if (indx == -1 || moves.get(indx) > m) {
-                    Node n = new Node(
-                        next,
-                        m,
-                        current
-                    );
-                    x.insert(n);
-                    if (indx != -1) {
-                        nodes.remove(indx);
-                        moves.remove(indx);
+                //if (pred != null && next.equals(pred.board)) continue;
+                //if (Math.abs(current.board.manhattan() - next.manhattan()) != 1) continue;
+                //if (current.board.manhattan() == next.manhattan()) continue;
+                // if (nodes.contains(next)) continue;
+                // boolean has = false;
+                // for  (Node xnode: pq) {
+                //     if (xnode.board.equals(next)) {
+                //         has = true;
+                //         break;
+                //     }
+                // }
+                // if (has) continue;
+                int p = next.manhattan() + current.moves + 1;
+                int indx = indexOf(nodes, p);
+                boolean has = false;
+                if (indx != -1) {
+                    while (indx < nodes.size() && nodes.get(indx).priority == p) {
+                        if (nodes.get(indx).board.equals(next)) {
+                            has = true;
+                        }
+                        indx++;
                     }
-                    nodes.add(n.board);
-                    moves.add(m);
                 }
+                if (has) continue;
+                Node n = new Node(
+                    next,
+                    current.moves + 1,
+                    current
+                );
+                pq.insert(n);
+                growArr(nodes, current);
             }
+            //nodes.add(current.board);
             pred = current;
         }
         goalNode = current;
         isSolved = true;
     }
 
-    // private static int indexOf(ArrayList<Node> arr, Board search, int moves) {
-    //     int mid;
-    //     int from = 0;
-    //     int to = arr.size();
-    //     do {
-    //         mid = (from + to) >>> 1;
-    //         if (arr.get(mid).moves < moves) from = mid + 1;
-    //         if (arr.get(mid).moves > moves) to = mid - 1;
-    //     } while (from < to && arr.get(mid).moves != moves);
+    public static void growArr(ArrayList<Node> arr, Node n) {
+        arr.add(n);
+        int indx = arr.size() - 1;
+        while (indx > 0 && (arr.get(indx).priority < arr.get(indx - 1).priority)) {
+            Collections.swap(arr, indx, indx - 1);
+            indx--;
+        }
+    }
 
-    //     if (arr.get(mid).equals(search)) return mid;
-    //     while (mid > from + 1 && arr.get(mid - 1).moves == moves) {
-    //         if (arr.get(mid).equals(search)) return mid;
-    //         mid--;
-    //     }
+    public static int indexOf(ArrayList<Node> arr, int prio) {
+        int mid;
+        int from = 0;
+        int to = arr.size();
+        if (arr.size() == 0) return -1;
+        do {
+            mid = (from + to) >>> 1;
+            if (arr.get(mid).priority < prio) from = mid + 1;
+            if (arr.get(mid).priority > prio) to = mid - 1;
+            if (arr.get(mid).priority == prio) to = mid - 1;
+        } while (from < to && arr.get(mid).priority != prio);
 
-    //     while (mid < to - 1 && arr.get(mid + 1).moves == moves) {
-    //         if (arr.get(mid).equals(search)) return mid;
-    //         mid++;
-    //     }
-    //     return -1;
-    // }
+        if (arr.get(mid).priority == prio && mid - 1 > from) {
+            while (arr.get(mid - 1).priority == prio && mid -1 > from) mid--;
+        }
+        return mid != -1 && arr.get(mid).priority == prio ? mid : -1;
+    }
 
-    private static class Node implements Comparable<Node> {
+    public static class Node implements Comparable<Node> {
         public final boolean isDone;
+        public final int manhattan;
         private final int moves;
         private final Node prev;
         private final Board board;
@@ -87,7 +103,8 @@ public class Solver {
             moves = m;
             prev = p;
             board = b;
-            priority = b.manhattan() + m;
+            manhattan = b.manhattan();
+            priority = manhattan + m;
             isDone = b.isGoal();
         }
 

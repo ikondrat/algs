@@ -1,6 +1,8 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
 public class SolverTest {
     @Test
     public void testOneMove() {
@@ -45,6 +47,117 @@ public class SolverTest {
             5,
             s.moves()
         );
+    }
+
+    @Test
+    public void testSorting() {
+        int[][] blocks = {
+            {1, 0, 2},
+            {4, 6, 3},
+            {7, 5, 8}
+        };
+        int[][] blocks1 = {
+            {1, 2, 0},
+            {4, 6, 3},
+            {7, 5, 8}
+        };
+        int[][] blocks2 = {
+            {1, 0, 2},
+            {4, 6, 3},
+            {7, 5, 8}
+        };
+        int[][] blocks4 = {
+            {0, 1, 2},
+            {4, 6, 3},
+            {7, 5, 8}
+        };
+        ArrayList<Solver.Node> arr = new ArrayList<>();
+
+        Solver.growArr(arr, new Solver.Node(
+            new Board(blocks),
+            0,
+            null
+        ));
+        Solver.growArr(arr, new Solver.Node(
+            new Board(blocks1),
+            0,
+            null
+        ));
+        Solver.growArr(arr, new Solver.Node(
+            new Board(blocks2),
+            0,
+            null
+        ));
+        Solver.growArr(arr, new Solver.Node(
+            new Board(blocks4),
+            0,
+            null
+        ));
+
+        assertEquals(
+            4,
+            arr.size()
+        );
+    }
+
+    @Test
+    public void testBiNodeSearch() {
+        int[][] blocks = {
+            {1, 0, 2},
+            {4, 6, 3},
+            {7, 5, 8}
+        };
+        int[][] blocks1 = {
+            {1, 2, 0},
+            {4, 6, 3},
+            {7, 5, 8}
+        };
+        int[][] blocks2 = {
+            {1, 0, 2},
+            {4, 6, 3},
+            {7, 5, 8}
+        };
+        int[][] blocks4 = {
+            {0, 1, 2},
+            {4, 6, 3},
+            {7, 5, 8}
+        };
+        ArrayList<Solver.Node> arr = new ArrayList<>();
+
+        Solver.growArr(arr, new Solver.Node(
+            new Board(blocks),
+            0,
+            null
+        ));
+        Solver.growArr(arr, new Solver.Node(
+            new Board(blocks1),
+            0,
+            null
+        ));
+        Solver.growArr(arr, new Solver.Node(
+            new Board(blocks2),
+            0,
+            null
+        ));
+        Solver.growArr(arr, new Solver.Node(
+            new Board(blocks4),
+            0,
+            null
+        ));
+
+        assertEquals(
+            Solver.indexOf(arr, 5),
+            1
+        );
+        assertEquals(
+            Solver.indexOf(arr, 4),
+            0
+        );
+        assertEquals(
+            Solver.indexOf(arr, 6),
+            3
+        );
+        
     }
 
     @Test
@@ -164,6 +277,21 @@ public class SolverTest {
         Solver s = new Solver(new Board(blocks));
         assertEquals(
             30,
+            s.moves()
+        );
+    }
+    
+    @Test
+    public void testPuzzle20() {
+        int[][] blocks = {
+            {1, 6, 4},
+            {7, 0, 8},
+            {2, 3, 5}
+        };
+        
+        Solver s = new Solver(new Board(blocks));
+        assertEquals(
+            20,
             s.moves()
         );
     }
