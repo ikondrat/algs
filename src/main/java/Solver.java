@@ -19,25 +19,28 @@ public class Solver {
         ArrayList<Node> nodes = new ArrayList<>();
         ArrayList<Node> nodesT = new ArrayList<>();
         Node current = null;
-        Node initialNode = new Node(initial, 0, null);
-        Node initialNodeTwin = new Node(initial.twin(), 0, null);
+        Node initialNode = new Node(initial, 0, initial.manhattan(), null);
+        Board t = initial.twin();
+        Node initialNodeTwin = new Node(t, 0, t.manhattan(), null);
         initialNodeTwin.isTwin = true;
         pq.insert(initialNode);
         pq.insert(initialNodeTwin);
         while (current == null || !current.isDone) {
             current = pq.delMin();
+            int m = current.moves + 1;
             for (Board next: current.board.neighbors()) {
                 if (current.prev != null && next.equals(current.prev.board)) continue;
-                if (Math.abs(current.board.manhattan() - next.manhattan()) != 1) continue;
-                if (current.board.manhattan() == next.manhattan()) continue;
-                int p = next.manhattan() + current.moves + 1;
+                int mh = next.manhattan();
+                if (Math.abs(current.manhattan - mh) != 1) continue;
+                if (current.manhattan == mh) continue;
+                int p = mh + mh;
                 ArrayList<Node> visited = current.isTwin ? nodesT : nodes;
                 int indx = indexOf(visited, p);
                 boolean has = false;
                 if (indx != -1) {
                     while (indx < visited.size() && visited.get(indx).priority == p) {
                         Node n = visited.get(indx);
-                        if (n.manhattan == next.manhattan() && n.moves == current.moves + 1 && n.board.equals(next)) {
+                        if (n.manhattan == mh && n.moves == m && n.board.equals(next)) {
                             has = true;
                         }
                         indx++;
@@ -46,7 +49,8 @@ public class Solver {
                 if (has) continue;
                 Node n = new Node(
                     next,
-                    current.moves + 1,
+                    m,
+                    mh,
                     current
                 );
                 pq.insert(n);
@@ -97,11 +101,11 @@ public class Solver {
         private final Board board;
         private final int priority;
 
-        public Node(Board b, int m,  Node p) {
+        public Node(Board b, int m, int mh,  Node p) {
             moves = m;
             prev = p;
             board = b;
-            manhattan = b.manhattan();
+            manhattan = mh;
             priority = manhattan + m;
             isDone = b.isGoal();
             isTwin = p != null && p.isTwin;
