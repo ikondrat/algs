@@ -17,6 +17,7 @@ public class Solver {
         }
         MinPQ<Node> pq = new MinPQ<>();
         ArrayList<Node> nodes = new ArrayList<>();
+        ArrayList<Node> nodesT = new ArrayList<>();
         Node current = null;
         Node initialNode = new Node(initial, 0, null);
         Node initialNodeTwin = new Node(initial.twin(), 0, null);
@@ -30,11 +31,12 @@ public class Solver {
                 if (Math.abs(current.board.manhattan() - next.manhattan()) != 1) continue;
                 if (current.board.manhattan() == next.manhattan()) continue;
                 int p = next.manhattan() + current.moves + 1;
-                int indx = indexOf(nodes, p);
+                ArrayList<Node> visited = current.isTwin ? nodesT : nodes;
+                int indx = indexOf(visited, p);
                 boolean has = false;
                 if (indx != -1) {
-                    while (indx < nodes.size() && nodes.get(indx).priority == p) {
-                        Node n = nodes.get(indx);
+                    while (indx < visited.size() && visited.get(indx).priority == p) {
+                        Node n = visited.get(indx);
                         if (n.manhattan == next.manhattan() && n.moves == current.moves + 1 && n.board.equals(next)) {
                             has = true;
                         }
@@ -49,7 +51,11 @@ public class Solver {
                 );
                 pq.insert(n);
             }
-            growArr(nodes, current);
+            if (current.isTwin) {
+                growArr(nodesT, current);
+            } else {
+                growArr(nodes, current);
+            }
         }
         goalNode = current;
         isSolved = !goalNode.isTwin;
