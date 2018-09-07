@@ -18,31 +18,24 @@ public class Solver {
         MinPQ<Node> pq = new MinPQ<>();
         ArrayList<Node> nodes = new ArrayList<>();
         Node current = null;
-        Node pred = null;
         Node initialNode = new Node(initial, 0, null);
+        Node initialNodeTwin = new Node(initial.twin(), 0, null);
+        initialNodeTwin.isTwin = true;
         pq.insert(initialNode);
+        pq.insert(initialNodeTwin);
         while (current == null || !current.isDone) {
             current = pq.delMin();
-            if (nodes.contains(current.board)) continue;
             for (Board next: current.board.neighbors()) {
-                //if (pred != null && next.equals(pred.board)) continue;
-                //if (Math.abs(current.board.manhattan() - next.manhattan()) != 1) continue;
-                //if (current.board.manhattan() == next.manhattan()) continue;
-                // if (nodes.contains(next)) continue;
-                // boolean has = false;
-                // for  (Node xnode: pq) {
-                //     if (xnode.board.equals(next)) {
-                //         has = true;
-                //         break;
-                //     }
-                // }
-                // if (has) continue;
+                if (current.prev != null && next.equals(current.prev.board)) continue;
+                if (Math.abs(current.board.manhattan() - next.manhattan()) != 1) continue;
+                if (current.board.manhattan() == next.manhattan()) continue;
                 int p = next.manhattan() + current.moves + 1;
                 int indx = indexOf(nodes, p);
                 boolean has = false;
                 if (indx != -1) {
                     while (indx < nodes.size() && nodes.get(indx).priority == p) {
-                        if (nodes.get(indx).board.equals(next)) {
+                        Node n = nodes.get(indx);
+                        if (n.manhattan == next.manhattan() && n.moves == current.moves + 1 && n.board.equals(next)) {
                             has = true;
                         }
                         indx++;
@@ -55,16 +48,14 @@ public class Solver {
                     current
                 );
                 pq.insert(n);
-                growArr(nodes, current);
             }
-            //nodes.add(current.board);
-            pred = current;
+            growArr(nodes, current);
         }
         goalNode = current;
-        isSolved = true;
+        isSolved = !goalNode.isTwin;
     }
 
-    public static void growArr(ArrayList<Node> arr, Node n) {
+    private static void growArr(ArrayList<Node> arr, Node n) {
         arr.add(n);
         int indx = arr.size() - 1;
         while (indx > 0 && (arr.get(indx).priority < arr.get(indx - 1).priority)) {
@@ -73,7 +64,7 @@ public class Solver {
         }
     }
 
-    public static int indexOf(ArrayList<Node> arr, int prio) {
+    private static int indexOf(ArrayList<Node> arr, int prio) {
         int mid;
         int from = 0;
         int to = arr.size();
@@ -91,8 +82,9 @@ public class Solver {
         return mid != -1 && arr.get(mid).priority == prio ? mid : -1;
     }
 
-    public static class Node implements Comparable<Node> {
+    private static class Node implements Comparable<Node> {
         public final boolean isDone;
+        public boolean isTwin;
         public final int manhattan;
         private final int moves;
         private final Node prev;
@@ -106,6 +98,7 @@ public class Solver {
             manhattan = b.manhattan();
             priority = manhattan + m;
             isDone = b.isGoal();
+            isTwin = p != null && p.isTwin;
         }
 
         @Override
@@ -128,10 +121,11 @@ public class Solver {
 
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
-        return goalNode.moves;
+        return isSolved ? goalNode.moves : -1;
     }
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
+        if (!isSolved) return null;
         Stack<Board> solutionBoards = new Stack<>();
         Node current = goalNode;
         while (current != null) {
