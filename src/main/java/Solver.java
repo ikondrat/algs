@@ -1,7 +1,5 @@
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.In;
-import java.util.ArrayList;
-import java.util.Collections;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Stack;
 
@@ -16,8 +14,6 @@ public class Solver {
             );
         }
         MinPQ<Node> pq = new MinPQ<>();
-        ArrayList<Node> nodes = new ArrayList<>();
-        ArrayList<Node> nodesT = new ArrayList<>();
         Node current = null;
         Node initialNode = new Node(initial, 0, initial.manhattan(), null);
         Board t = initial.twin();
@@ -33,20 +29,6 @@ public class Solver {
                 int mh = next.manhattan();
                 if (Math.abs(current.manhattan - mh) != 1) continue;
                 if (current.manhattan == mh) continue;
-                int p = mh + mh;
-                ArrayList<Node> visited = current.isTwin ? nodesT : nodes;
-                int indx = indexOf(visited, p);
-                boolean has = false;
-                if (indx != -1) {
-                    while (indx < visited.size() && visited.get(indx).priority == p) {
-                        Node n = visited.get(indx);
-                        if (n.manhattan == mh && n.moves == m && n.board.equals(next)) {
-                            has = true;
-                        }
-                        indx++;
-                    }
-                }
-                if (has) continue;
                 Node n = new Node(
                     next,
                     m,
@@ -55,41 +37,9 @@ public class Solver {
                 );
                 pq.insert(n);
             }
-            if (current.isTwin) {
-                growArr(nodesT, current);
-            } else {
-                growArr(nodes, current);
-            }
         }
         goalNode = current;
         isSolved = !goalNode.isTwin;
-    }
-
-    private static void growArr(ArrayList<Node> arr, Node n) {
-        arr.add(n);
-        int indx = arr.size() - 1;
-        while (indx > 0 && (arr.get(indx).priority < arr.get(indx - 1).priority)) {
-            Collections.swap(arr, indx, indx - 1);
-            indx--;
-        }
-    }
-
-    private static int indexOf(ArrayList<Node> arr, int prio) {
-        int mid;
-        int from = 0;
-        int to = arr.size();
-        if (arr.size() == 0) return -1;
-        do {
-            mid = (from + to) >>> 1;
-            if (arr.get(mid).priority < prio) from = mid + 1;
-            if (arr.get(mid).priority > prio) to = mid - 1;
-            if (arr.get(mid).priority == prio) to = mid - 1;
-        } while (from < to && arr.get(mid).priority != prio);
-
-        if (arr.get(mid).priority == prio && mid - 1 > from) {
-            while (arr.get(mid - 1).priority == prio && mid -1 > from) mid--;
-        }
-        return mid != -1 && arr.get(mid).priority == prio ? mid : -1;
     }
 
     private static class Node implements Comparable<Node> {
