@@ -23,8 +23,7 @@ dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     compile 'com.google.guava:guava:23.0'
 
-    compile 'edu.princeton.cs:algs4:1.0.3'
-
+    compile files('libs/algs4.jar')
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'
 }
