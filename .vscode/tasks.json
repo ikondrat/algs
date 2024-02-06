@@ -21,6 +21,15 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "createDistPuzzle",
+            "type": "shell",
+            "command": "./gradlew createDistPuzzle",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
